@@ -1,0 +1,167 @@
+[
+  {
+    "stage": "01 首页",
+    "goal": "开始一个游戏",
+    "action": "输入想法；可添加参考图；选择 Smart / Quality；点 START",
+    "feedback": "首页同时显示项目卡和剩余作品位",
+    "decision": "想法必填；参考图、模式属于可选设置",
+    "change": "测试账号已有 1 个项目、剩余 0 个作品位",
+    "friction": "创建名额和生成任务是两个限制",
+    "id": "E001",
+    "screenshot": "S001-home.png"
+  },
+  {
+    "stage": "02 创建受限",
+    "goal": "启动本次测试",
+    "action": "输入小猫收集星星的测试想法，点击 START",
+    "feedback": "提示当前已有 1 个运行任务，上限 1 个",
+    "decision": "等待当前任务结束",
+    "change": "未创建第二个项目",
+    "friction": "不是点击成功就代表任务已经开始",
+    "id": "E007",
+    "screenshot": "S007-create-limit.png"
+  },
+  {
+    "stage": "03 澄清主题",
+    "goal": "把模糊想法变成可做的主题",
+    "action": "历史原文：帮我生成一个愤怒的小鸟；已选暴躁团雀大战偷蛋浣熊",
+    "feedback": "ASKED · ANSWERED；问题与选择结果留在对话里",
+    "decision": "选择主题或自由补充",
+    "change": "后续出现完整方案",
+    "friction": "这是进入前的历史，未亲手操作原始提问",
+    "id": "E004",
+    "screenshot": "S004-original-question.png"
+  },
+  {
+    "stage": "04 查看方案",
+    "goal": "知道将做什么",
+    "action": "点击“查看完整方案”",
+    "feedback": "GAME PLAN 弹窗；分玩法、控制、关卡、美术、音频等章节",
+    "decision": "可关闭，回到制作页",
+    "change": "仍保留同一项目与制作状态",
+    "friction": "首次锁定前是否需单独确认，待补充",
+    "id": "E005",
+    "screenshot": "S005-full-plan.png"
+  },
+  {
+    "stage": "05 制作中",
+    "goal": "知道 AI 正在做什么",
+    "action": "等待；可查看任务卡与素材",
+    "feedback": "左边对话事件；底部当前步骤、计数、计时和 STOP；右边占位",
+    "decision": "等待或停止，无需手动点每个工具",
+    "change": "任务清单从 0/7 到 7/7；角色图、背景、音频出现",
+    "friction": "工具术语多，普通人未必看得懂",
+    "id": "E002",
+    "screenshot": "S002-building.png"
+  },
+  {
+    "stage": "06 自动修复",
+    "goal": "生成失败时继续前进",
+    "action": "本阶段未额外点击",
+    "feedback": "素材有失败标记；加载检查 2/3 待修复，后面继续写入和测试",
+    "decision": "这一轮由系统继续，无需人点重试",
+    "change": "出现后续测试截图与 READY",
+    "friction": "工具卡勾选与内部结果偶有冲突，不能只看绿色勾",
+    "id": "E011",
+    "screenshot": "S019-check-failure.png"
+  },
+  {
+    "stage": "07 试玩",
+    "goal": "确认真的能玩",
+    "action": "在右侧直接拖拽鸟，按空格；随后点画面并按 R",
+    "feedback": "鸟数量从 2 变 1，出现鼓气提示；重开恢复开局；最终 LIVE 60fps",
+    "decision": "满意则继续；不满意写修改要求",
+    "change": "右侧从占位变为可交互游戏",
+    "friction": "已验证发射与重开，不等于所有关卡和物理机制通过",
+    "id": "E010",
+    "screenshot": "S010-play-shot.png"
+  },
+  {
+    "stage": "08 设备预览",
+    "goal": "检查不同屏幕",
+    "action": "点“桌面”选择“手机 · 竖屏”",
+    "feedback": "右侧改为窄长预览；桌面、手机横屏、平板同列",
+    "decision": "选一种预览尺寸，可切回桌面",
+    "change": "同一游戏在另一尺寸显示",
+    "friction": "该样本竖屏文字很小；没有看到方案承诺的旋转提示",
+    "id": "E013",
+    "screenshot": "S013-phone-portrait.png"
+  },
+  {
+    "stage": "09 继续修改",
+    "goal": "给当前游戏加操作提示",
+    "action": "同一个输入框输入具体要求，点 SEND",
+    "feedback": "输入被清空；按钮变 STOP；开始新一轮；旧游戏保留在右侧",
+    "decision": "只需说要改什么，无“聊方案 / 改游戏”选择",
+    "change": "记录新要求，继续读写和测试",
+    "friction": "底部仍沿用上轮 COMPLETE 清单，容易误读",
+    "id": "E014",
+    "screenshot": "S014-modification-sent.png"
+  },
+  {
+    "stage": "10 查看任务",
+    "goal": "展开具体制作步骤",
+    "action": "点击底部任务摘要",
+    "feedback": "展开 7 条任务，再点可收起",
+    "decision": "是否查看详细过程属于可选动作",
+    "change": "对话与游戏位置不变",
+    "friction": "本次修改未及时更新任务清单",
+    "id": "E015",
+    "screenshot": "S015-progress-toggle.png"
+  },
+  {
+    "stage": "11 手动停止",
+    "goal": "中断这一轮修改",
+    "action": "点击 STOP",
+    "feedback": "本轮已停止；已完成内容保留，可以继续或重新生成；SEND 恢复",
+    "decision": "继续描述或先试玩",
+    "change": "旧预览仍可用；停止记录出现",
+    "friction": "主动停止被放在“出错”样式里",
+    "id": "E016",
+    "screenshot": "S016-stopped.png"
+  },
+  {
+    "stage": "12 停止后继续",
+    "goal": "完成刚才的小改动",
+    "action": "输入“继续完成上一条操作提示”，点击 SEND",
+    "feedback": "新一轮计时、读写、自动试玩检查",
+    "decision": "等待结果，再实际验收",
+    "change": "继续同一项目，没有再填初始方案",
+    "friction": "有写入失败后继续修复的过程",
+    "id": "E017",
+    "screenshot": "S017-resume.png"
+  },
+  {
+    "stage": "13 修改验收",
+    "goal": "确认改动真的出现",
+    "action": "查看更新后的右侧游戏",
+    "feedback": "底部出现拖拽发射、空格鼓气、R 重开提示；状态 LIVE",
+    "decision": "继续试玩或再提要求",
+    "change": "本次小改动可见，之前的角色和场景仍在",
+    "friction": "只验证这一处变化，不宣称所有缺失机制补齐",
+    "id": "E018",
+    "screenshot": "S018-modification-result.png"
+  },
+  {
+    "stage": "14 项目信息",
+    "goal": "找到名称、简介和封面入口",
+    "action": "点顶部游戏名，查看后取消",
+    "feedback": "编辑游戏信息对话框，含名称、简介、封面、随机起名、保存",
+    "decision": "保存或取消",
+    "change": "本次取消，未改元信息",
+    "friction": "未观察到可浏览的版本历史入口",
+    "id": "E021",
+    "screenshot": "S021-project-info.png"
+  },
+  {
+    "stage": "15 再试新建",
+    "goal": "验证零作品位的真实阻断",
+    "action": "任务结束后再次在首页点 START",
+    "feedback": "弹窗“作品位用完了”；邀请好友、获得方式、以后再说",
+    "decision": "以后再说或自行处理额度",
+    "change": "没有新增项目",
+    "friction": "与运行并发限制不同，应在产品里明确区分",
+    "id": "E023",
+    "screenshot": "S023-slot-limit.png"
+  }
+]

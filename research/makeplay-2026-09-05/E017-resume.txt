@@ -1,0 +1,796 @@
+root
+  status
+    anchor [ref=589, loc=href:/blog/game-slots, url=https://makeplay.ai/blog/game-slots]
+      container
+        text "📢"
+        text "MakePlay 作品位正式上线：多创作，多收获"
+      container
+        text "看详情"
+        text "▶"
+    button "Dismiss" [ref=590, loc=css:button[aria-label="Dismiss"]]
+      text "✕"
+  container
+    container
+      button [ref=1168, loc=unstable]
+        svg_root
+        container
+          text "MAKEPLAY"
+          text ".AI"
+      container
+      button [ref=1170, loc=unstable]
+        svg_root
+        text "游戏"
+      container
+        button [ref=3238, loc=unstable]
+          container
+          container
+            text "这蛋不能忍"
+            text ".game"
+          text "▾"
+        text "制作中"
+      button [ref=1172, loc=unstable]
+        text "⑂"
+        text "保存副本"
+      note
+        svg_root
+        text "首次发布可得 10 金币"
+        container
+      button [ref=1164, loc=unstable]
+        text "▲"
+        text "发布"
+      button [ref=1167, loc=unstable]
+        image
+        text "▾"
+    container
+      container
+        container [ref=348, loc=unstable]
+          paragraph
+            text "帮我生成一个愤怒的小鸟。"
+          text "◇"
+          text "思考中…"
+          text "ASKED · ANSWERED ✓"
+          text "角色与主题"
+          text "我会保留“拖拽弹弓、抛物线飞行、撞塌建筑”的核心玩法，但使用原创角色与场景。你想要哪种主题？"
+          text "暴躁团雀大战偷蛋浣熊（推荐）"
+          text "◇"
+          text "Formulating game design"
+          container [ref=1791, loc=unstable]
+            svg_root
+            text "PLAN LOCKED · BUILDING"
+            button [ref=1718, loc=unstable]
+              text "⛶"
+              text "查看完整方案"
+          container [ref=1792, loc=unstable]
+            heading
+              text "1. 游戏承诺"
+            paragraph
+              text "一款横屏 2D 物理弹射解谜游戏。玩家拖拽弹弓上的暴躁团雀，观察实时预测轨迹，松手后让它沿抛物线撞击木、石、玻璃结构，利用倒塌与连锁碰撞赶�..."
+            heading
+              text "2. 核心循环"
+            ordered_list
+              list_item
+                text "观察堡垒结构、浣熊位置和被关住的鸟蛋。"
+              list_item
+                text "在弹弓有效半径内向后拖拽团雀；拉伸越远，初速度越高，虚线显示前约 1.2 秒的预测轨迹。"
+              list_item
+                text "松手发射；飞行期间可单击一次触发“鼓气冲撞”：团雀短暂膨胀 35%，保持速度但提高撞击范围与冲量，适合在穿过玻璃后顶倒承重块。"
+              list_item
+                text "观看物理连锁；摧毁或撞落所有浣熊即过关，剩余团雀与结构破坏率转化为星级和分数。"
+              list_item
+                text "若团雀用尽且仍有浣熊站立则失败，可立即重试当前关。"
+            paragraph
+              text "决策重点是发射角、力度、鼓气时机，以及选择直接命中还是拆承重点。压力来自有限弹药，不加入计时失败。"
+            heading
+              text "3. 镜头与控制"
+            unordered_list
+              list_item
+                text "横屏 16:9，固定侧视构图；弹弓与发射区约占关卡世界左侧 20%，堡垒位于中右侧，地面和完整目标始终可读。"
+              list_item
+                text "默认镜头覆盖约 24×13.5 个世界单位；发射后平滑跟随团雀，当速度降至低值或碰撞结束后用 0.7 秒拉回全关视图。大型坍塌期间镜头保持全局，不追逐�..."
+              list_item
+                text "桌面：鼠标按住团雀拖拽，松开射击；飞行中单击或按空格触发一次鼓气；R 重开；Esc 暂停。"
+              list_item
+                text "触屏：单指拖拽并松开发射，飞行中轻点空白区域鼓气；提供暂停与重开按钮。若设备竖屏，显示旋转设备提示，不压缩关卡为竖屏玩法。"
+              list_item
+                text "拖拽限制为以弹弓叉点为圆心、最大 3.2 世界单位的后方半圆，禁止向前推射。"
+            heading
+              text "4. 单局结构"
+            paragraph
+              text "一个完整流程为 3 个连续关卡，首次游玩约 5–7 分钟："
+            unordered_list
+              list_item
+                text "第 1 关“木架试手”：2 只团雀、2 只浣熊；单层木架与一块玻璃，教学拖拽和预测线，首发后提示鼓气。目标是在 2 发内理解承重点。"
+              list_item
+                text "第 2 关“石帽陷阱”：3 只团雀、3 只浣熊；木柱托举重石顶板，加入会滚落的圆石和左右两个可选突破口。"
+              list_item
+                text "第 3 关“蛋塔危机”：4 只团雀、4 只浣熊；三层混合堡垒，中央鸟蛋置于不计伤害的软巢中；两处连锁承重点，预期 3–4 发解决。"
+              list_item
+                text "关卡间显示星级、分数、最佳成绩与继续/重玩/分享。通关第 3 关后显示总星数和总分，可重玩任意已完成关卡。"
+              list_item
+                text "每次重试恢复该关团雀数、所有刚体、浣熊、分数、镜头和鼓气状态；不保留上次废墟。"
+            heading
+              text "5. 游戏系统"
+            unordered_list
+              list_item
+                text "团雀：每发仅一次鼓气；直接撞击、坠落或静止 1.2 秒后判定该发结束。离开世界边界也结束该发。"
+              list_item
+                text "材质：玻璃低耐久、易穿透并碎裂；木材中等耐久、易折断；石材高耐久，通常靠失去支撑后砸落。块体受累计冲击超过阈值后破裂为少量预制碎块，�..."
+              list_item
+                text "浣熊：受足够冲击、被重物压中或跌落超过 2.5 世界单位即被赶走；轻微碰撞只产生眩晕反馈。"
+              list_item
+                text "鸟蛋：是需要夺回的视觉目标，不受物理伤害、不产生失败条件，避免随机坍塌造成不可控惩罚。"
+              list_item
+                text "计分：赶走浣熊每只 5,000；有效破坏按材质和冲量累计；剩余团雀每只 10,000。三星阈值按各关预设，不能由随机物理决定。"
+              list_item
+                text "胜利：所有浣熊被赶走；失败：最后一只团雀完成结算后仍有浣熊。"
+              list_item
+                text "物理进入低速状态后等待 1.0 秒再结算，期间若继续发生显著碰撞则重新计时，让连锁坍塌完整播放。"
+            heading
+              text "6. 标志性体验"
+            unordered_list
+              list_item
+                text "弹弓橡皮筋必须随着拖拽真实分叉、收紧，并让团雀略微后仰；预测虚线随力度和角度即时更新。"
+              list_item
+                text "鼓气冲撞必须有明确的“先鼓起、再重撞”节奏，且真正改变碰撞体和冲量，而非纯视觉特效。"
+              list_item
+                text "堡垒坍塌要有材质差异与延迟连锁：玻璃脆裂、木梁折断、石块沉重倾倒；浣熊会先惊慌再被砸飞，突出拆承重点的满足感。"
+            heading
+              text "7. 操作反馈"
+            unordered_list
+              list_item
+                text "拉弓：团雀身体被拉成轻微椭圆，橡皮筋张力和低沉吱呀声随距离递增；满力度附近出现细小抖动，但瞄准点保持稳定。"
+              list_item
+                text "发射：松手瞬间弹弓回弹、团雀压缩后伸展，播放短促弹射声；镜头只做极轻的方向性推移，不在发射时大幅震动。"
+              list_item
+                text "鼓气：按下后 90 毫秒预备膨胀，出现一圈羽毛气流和“噗”声；接下来 450 毫秒为强化碰撞窗口，结束后恢复尺寸。"
+              list_item
+                text "撞击：木、石、玻璃使用不同撞击声与碎屑；强碰撞触发短暂停顿和按冲量分级的镜头震动。浣熊轻伤时眩晕摇头，淘汰时弹飞并化作一团灰尘离场。"
+              list_item
+                text "坍塌：连续破坏时分数数字按事件逐个跳出；三块以上结构在 0.8 秒内破坏会触发“连锁拆塔”提示和上扬音效。"
+              list_item
+                text "反馈粒子、冲击停顿和镜头震动统一使用平台 FX 运行时的语义预设，声音通过 Sound Runtime 的语义 Sound Cues 管理。"
+            heading
+              text "8. 美术方向"
+            unordered_list
+              list_item
+                text "2D 明亮卡通森林，原创“暴躁团雀大战偷蛋浣熊”主题；角色为大头圆身、粗轮廓、表情夸张的 chibi 比例，但避免复刻任何现有小鸟、猪或关卡造型。"
+              list_item
+                text "画面分三层：柔和蓝天与远山背景、可交互草地和堡垒中景、少量前景草叶；可交互物体轮廓和对比度高于背景。"
+              list_item
+                text "媒介：优先搜索现成资产；团雀、浣熊、鸟蛋和场景底图使用透明或不透明位图资产；木、石、玻璃块使用位图纹理覆盖刚体；代码仅绘制弹弓橡皮筋�..."
+              list_item
+                text "调色板：天空蓝 #82D8FF、草绿 #8BCB5A、团雀珊瑚红 #EF5350、浣熊灰 #687078、木棕 #9A6238、石灰 #77838B、蛋壳暖白 #FFF3D6。日间柔光，接触阴影清晰，不使用写..."
+              list_item
+                text "动画预算：团雀待机眨眼/皱眉、拖拽形变、鼓气、撞击压缩各一套；浣熊待机坏笑、惊慌、眩晕、淘汰各一套；结构动画由物理驱动。"
+              list_item
+                text "语言：简体中文为主语言；首发语言集为简体中文，文本资源结构允许后续扩展。标题与主要显示字使用"
+                text "smiley-sans/SmileySans[zh-Hans;modern]"
+                text "，小字号信息使用清晰系统无衬线字体。"
+            heading
+              text "9. 音频与 UI"
+            unordered_list
+              list_item
+                text "音频层：轻快木管与拨弦循环音乐；森林风和鸟鸣环境声；弹弓张力/释放、团雀叫声、鼓气、三类材质撞击与破裂、浣熊反应、连锁加分、胜负短乐句�..."
+              list_item
+                text "类型为物理弹射解谜，UI 遵循该类型的既有 HUD 约定，由构建阶段根据实际游戏画面确定布局与视觉语言。"
+              list_item
+                text "游戏中高优先信息：剩余团雀、当前分数、尚存浣熊数量、鼓气是否可用；次级信息：关卡编号、暂停、重开、音量。"
+              list_item
+                text "瞄准时仅显示力度反馈与预测轨迹，不遮挡目标结构。关卡结算显示星级、分数、最佳分、剩余团雀奖励、继续/重玩/关卡选择/分享。失败结算显示尚�..."
+            heading
+              text "10. 制作优先级"
+            unordered_list
+              list_item
+                text "P0：拖拽弹弓、稳定抛物线、一次鼓气、三材质刚体破坏、浣熊淘汰、胜负与干净重开、3 个可完成关卡。"
+              list_item
+                text "P1：原创角色与场景位图、材质差异反馈、镜头跟随与全景回归、星级计分、音效与音乐、暂停和触屏输入、结算分享。"
+              list_item
+                text "P2：连锁拆塔提示、最佳成绩、关卡选择、细化待机表情、前景环境动画与更多碎屑变化。"
+          text "◇"
+          text "Planning document inspection"
+          container [ref=1869, loc=unstable]
+            svg_root
+            text "QUEST LOG"
+            text "0"
+            text "/"
+            text "7"
+            text "✓"
+          container
+            text "正在确定森林弹射的画面方向"
+            text "准备团雀、浣熊、鸟蛋与森林场景素材"
+            text "搭建弹弓、抛物线与堡垒物理玩法"
+            text "接入鼓气冲撞、材质破坏与连锁反馈"
+            text "加入三关流程、触屏操作与结算界面"
+            text "跑通发射、坍塌、重开与移动端体验"
+            text "完成可玩的浏览器版本"
+          svg_root
+          text "READ DOC"
+          text "GAME_DESIGN.md"
+          text "✓"
+          svg_root
+          text "READ DOC"
+          text "AGENTS.md"
+          text "✗"
+          svg_root
+          text "FIND FILES"
+          text "✓"
+          svg_root
+          text "FIND FILES"
+          text "✓"
+          svg_root
+          text "FIND FILES"
+          text "✓"
+          svg_root
+          text "PLAYBOOK"
+          text "找对 pixi 打法手册"
+          text "✗"
+          svg_root
+          text "PLAYBOOK"
+          text "fx"
+          text "✓"
+          svg_root
+          text "PLAYBOOK"
+          text "sound"
+          text "✓"
+          text "◇"
+          text "思考中…"
+          svg_root
+          text "SEARCH SPRITES"
+          text "bird"
+          text "✓"
+          svg_root
+          text "SEARCH SPRITES"
+          text "raccoon"
+          text "✓"
+          svg_root
+          text "SEARCH SPRITES"
+          text "forest background"
+          text "✓"
+          svg_root
+          text "SEARCH FONTS"
+          text "smiley sans"
+          text "✓"
+          text "◇"
+          text "Generating game assets"
+          svg_root
+          text "WRITE DOC"
+          text "ART_DIRECTION.md"
+          text "✓"
+          svg_root
+          text "WRITE CODE"
+          text "✗"
+          text "◇"
+          text "思考中…"
+          svg_root
+          text "RUN TASK"
+          text "记录本项目的原创主题与构建约束"
+          text "✓"
+          svg_root
+          text "WRITE DOC"
+          text "SOUND_DIRECTION.md"
+          text "✓"
+          container [ref=2476, loc=unstable]
+            svg_root
+            text "QUEST LOG"
+            text "1"
+            text "/"
+            text "7"
+            text "✓"
+          container
+            text "确定原创森林弹射的画面与音效方向"
+            text "正在准备角色与森林场景素材"
+            text "其余 5 项不变"
+          container [ref=2498, loc=unstable]
+            text "✓"
+            text "Generated 3 assets"
+            text "HIDE"
+          button [ref=2490, loc=unstable]
+            image
+            text "angry-sparrow.png"
+          button [ref=2491, loc=unstable]
+            image
+            text "raccoon-raider.png"
+          button [ref=2492, loc=unstable]
+            image
+            text "nest-egg.png"
+          container [ref=2516, loc=unstable]
+            text "✓"
+            text "Added 1 asset"
+            text "HIDE"
+          button [ref=2506, loc=unstable]
+            image
+            text "background_color_hills.png"
+          button [ref=2507, loc=unstable]
+            text "Kenney"
+          text "·"
+          text "CC0"
+          container [ref=2531, loc=unstable]
+            text "✓"
+            text "Generated 1 audio clip"
+            text "HIDE"
+          button [ref=2525, loc=unstable]
+            canvas
+            text "▶"
+            text "forest-loop.m4a"
+          container [ref=2569, loc=unstable]
+            text "✗"
+            text "Generated 5 assets"
+            text "HIDE"
+          svg_root
+          text "sling-release"
+          svg_root
+          text "bird-boost"
+          svg_root
+          text "material-impact"
+          text "✗"
+          text "raccoon-out"
+          text "这条没生成出来"
+          svg_root
+          text "win-jingle"
+          text "◇"
+          text "Implementing game mechanics"
+          svg_root
+          text "WRITE CODE"
+          text "sound.project.json"
+          text "✓"
+          container [ref=2627, loc=unstable]
+            svg_root
+            text "SOUND BUILD"
+            text "sound.project.json"
+            text "✓"
+          container
+            text "Result"
+            text "Sound project compiled: 1 assets / 1 cues / 1 music states / 0 mix states; contentHash 3c411e096b410172b590f43d57b1ef963cdbaeb67148aabe7fcc42825d6f0ee5. Generated sound.manifest.json, sound.catalog.js..."
+          text "◇"
+          text "思考中…"
+          svg_root
+          text "WRITE CODE"
+          text "i18n.ts"
+          text "✓"
+          svg_root
+          text "WRITE CODE"
+          text "game.ts"
+          text "✓"
+          text "◇"
+          text "思考中…"
+          container [ref=2719, loc=unstable]
+            svg_root
+            text "PLAYTEST"
+            text "冒烟体检 2/3——待修复"
+            text "✗"
+          text "✗"
+          text "加载"
+          text "Game loaded (session 1): __gpReady=false canvas=true · 1 error(s) during load"
+          text "✓"
+          text "运行"
+          text "rAF ≈120fps"
+          text "✓"
+          text "操作"
+          text "generic input dispatched (taps · Space · arrows · held key · drag)"
+          text "◇"
+          text "Fixing asset load issues"
+          container [ref=2783, loc=unstable]
+            svg_root
+            text "QUEST LOG"
+            text "2"
+            text "/"
+            text "7"
+            text "✓"
+          container
+            text "准备团雀、浣熊、鸟蛋与森林场景素材"
+            text "正在搭建弹弓与堡垒物理玩法"
+            text "其余 5 项不变"
+          svg_root
+          text "WRITE CODE"
+          text "game.ts"
+          text "✓"
+          text "◇"
+          text "思考中…"
+          container [ref=2841, loc=unstable]
+            svg_root
+            text "PLAYTEST"
+            text "✓"
+          button [ref=2835, loc=unstable]
+            image
+          text "◇"
+          text "Considering UI stage entry"
+          container [ref=3481, loc=unstable]
+            text "TOOL"
+            text "ENTER UI STAGE"
+            text "✓"
+          container
+            text "{ "screens": [ "gameplay HUD", "victory results", "failure retry" ], "state_keys": [ "mode", "level", "birdsLeft", "score", "raccoonsAlive", "boosted" ], "actions": [ "drag-launch", "boost", "restart"..."
+            text "Result"
+            text "Cannot enter UI stage: game_eval ran but declared no Acceptance coverage. Assert at least one gameplay AC-n with covers:["AC-n"], then call again."
+          text "◇"
+          text "思考中…"
+          container [ref=3562, loc=unstable]
+            svg_root
+            text "PLAYTEST"
+            text "✓"
+          button [ref=3556, loc=unstable]
+            image
+          text "◇"
+          text "思考中…"
+          container [ref=3581, loc=unstable]
+            text "TOOL"
+            text "ENTER UI STAGE"
+            text "✓"
+          container
+            text "{ "screens": [ "gameplay HUD", "victory results", "failure retry" ], "state_keys": [ "mode", "level", "birdsLeft", "score", "raccoonsAlive", "boosted" ], "actions": [ "drag-launch", "boost", "restart"..."
+            text "Result"
+            text "UI stage entered. Stop expanding gameplay systems. Read the ui skill, UI_STAGE.json and the one-time UI_EVIDENCE.json snapshot; inspect the cited world files/images and use them as a rough visual star..."
+          text "◇"
+          text "思考中…"
+          svg_root
+          text "READ CODE"
+          text "UI_STAGE.json"
+          text "✓"
+          svg_root
+          text "READ CODE"
+          text "UI_EVIDENCE.json"
+          text "✓"
+          svg_root
+          text "PLAYBOOK"
+          text "ui"
+          text "✓"
+          text "◇"
+          text "思考中…"
+          container [ref=3886, loc=unstable]
+            svg_root
+            text "QUEST LOG"
+            text "3"
+            text "/"
+            text "7"
+            text "✓"
+          container
+            text "搭建弹弓、抛物线与堡垒物理玩法"
+            text "正在接入鼓气与连锁坍塌反馈"
+            text "其余 5 项不变"
+          container [ref=3944, loc=unstable]
+            svg_root
+            text "COVER"
+            text "明亮卡通森林弹射解谜封面：原创珊瑚红暴躁团雀从左侧弹弓飞向中右侧木石玻璃堡垒，灰"
+            text "✓"
+          container
+            button [ref=3954, loc=unstable]
+              image
+              text "cover.jpg"
+          svg_root
+          text "WRITE DOC"
+          text "UI_CONTRACT.md"
+          text "✓"
+          text "◇"
+          text "思考中…"
+          svg_root
+          text "READ DOC"
+          text "UI_CONTRACT.md"
+          text "✓"
+          text "◇"
+          text "Modifying button and overlay design"
+          svg_root
+          text "WRITE CODE"
+          text "game.ts"
+          text "✓"
+          text "◇"
+          text "Adding components to the panel"
+          svg_root
+          text "WRITE CODE"
+          text "game.ts"
+          text "✓"
+          text "◇"
+          text "思考中…"
+          container [ref=4183, loc=unstable]
+            svg_root
+            text "PLAYTEST"
+            text "✓"
+          button [ref=4177, loc=unstable]
+            image
+          text "◇"
+          text "Updating test tasks"
+          container [ref=5237, loc=unstable]
+            svg_root
+            text "QUEST LOG"
+            text "5"
+            text "/"
+            text "7"
+            text "✓"
+          container
+            text "接入鼓气冲撞、材质破坏与连锁反馈"
+            text "加入三关流程、触屏操作与结算界面"
+            text "正在跑通发射坍塌与重开体验"
+            text "其余 4 项不变"
+          container [ref=5316, loc=unstable]
+            svg_root
+            text "PLAYTEST"
+            text "✓"
+          button [ref=5310, loc=unstable]
+            image
+          text "◇"
+          text "思考中…"
+          container [ref=5390, loc=unstable]
+            svg_root
+            text "PLAYTEST"
+            text "✓"
+          button [ref=5384, loc=unstable]
+            image
+          text "◇"
+          text "Sorting out app errors"
+          container [ref=5507, loc=unstable]
+            svg_root
+            text "QUEST LOG"
+            text "6"
+            text "/"
+            text "7"
+            text "✓"
+          container
+            text "跑通发射、坍塌、重开与移动端体验"
+            text "正在完成可玩的浏览器版本"
+            text "其余 5 项不变"
+          container [ref=5560, loc=unstable]
+            svg_root
+            text "READY"
+            text "✓"
+          container
+            text "NOTE"
+            text "已完成原创暴躁团雀对抗偷蛋浣熊的横屏弹射解谜版本：弹弓拖拽与预测线、飞行中鼓气冲撞、材质化堡垒、浣熊淘汰、胜负结算、重开与三关继续流�..."
+          text "◇"
+          text "思考中…"
+          svg_root
+          text "WRITE DOC"
+          text "UI_CONTRACT.md"
+          text "✓"
+          svg_root
+          text "WRITE CODE"
+          text "game.ts"
+          text "✓"
+          container [ref=5667, loc=unstable]
+            svg_root
+            text "READY"
+            text "✓"
+          container
+            text "NOTE"
+            text "已补齐 UI 契约的固定章节、横屏声明与颜色 token 对账，继续进行最终验证。"
+          container [ref=5793, loc=unstable]
+            svg_root
+            text "QUEST LOG · COMPLETE"
+            text "7"
+            text "/"
+            text "7"
+            text "✓"
+          container
+            text "完成可玩的浏览器版本"
+            text "其余 6 项不变"
+          paragraph
+            text "完成了：现在可以拖拽弹弓发射暴躁团雀，触发鼓气冲撞，撞塌堡垒并赶走偷蛋浣熊，还支持重开、胜负结算和三关流程。"
+          text "◇"
+          text "思考中…"
+          container [ref=5889, loc=unstable]
+            svg_root
+            text "PLAYTEST"
+            text "✓"
+          button [ref=5883, loc=unstable]
+            image
+          text "◇"
+          text "思考中…"
+          container [ref=5975, loc=unstable]
+            svg_root
+            text "PLAYTEST"
+            text "✓"
+          button [ref=5969, loc=unstable]
+            image
+          text "◇"
+          text "思考中…"
+          svg_root
+          text "READ DOC"
+          text "GAME_DESIGN.md"
+          text "✓"
+          text "◇"
+          text "Editing and finalizing document"
+          svg_root
+          text "WRITE DOC"
+          text "GAME_DESIGN.md"
+          text "✓"
+          container [ref=6441, loc=unstable]
+            svg_root
+            text "READY"
+            text "✓"
+          container
+            text "NOTE"
+            text "已用浏览器探针验证并勾选 AC-6：重开会恢复团雀数量、浣熊数量与分数。AC-3/4/5/7 当前实现仍未达到设计文档所写的完整物理坍塌、分享按钮和三材质�..."
+          paragraph
+            text "已完成验证并更新清单；目前 AC-3、AC-4、AC-5、AC-7 仍未达成设计文档要求，后续可以继续补强真实坍塌、失败流程、分享按钮和三种材质反馈。"
+          paragraph
+            text "请只做一个小改动：在游戏底部增加始终可见的中文操作提示“拖拽发射 · 空格鼓气 · R 重开”，文字清楚、不挡住弹弓和目标。保留现有角色、美术�..."
+          text "◇"
+          text "思考中…"
+          svg_root
+          text "READ CODE"
+          text "game.ts"
+          text "✓"
+          text "◇"
+          text "Implementing persistent text"
+          svg_root
+          text "WRITE CODE"
+          text "i18n.ts"
+          text "✗"
+          text "◇"
+          text "思考中…"
+          svg_root
+          text "READ CODE"
+          text "i18n.ts"
+          text "✓"
+          svg_root
+          text "WRITE CODE"
+          text "i18n.ts"
+          text "✓"
+          svg_root
+          text "WRITE CODE"
+          text "game.ts"
+          text "✓"
+          text "◇"
+          text "思考中…"
+          svg_root
+          text "WRITE DOC"
+          text "UI_CONTRACT.md"
+          text "✗"
+          text "◇"
+          text "思考中…"
+          svg_root
+          text "READ DOC"
+          text "UI_CONTRACT.md"
+          text "◜"
+          paragraph
+            text "刚才是在测试停止按钮。请继续完成上一条的底部中文操作提示，并实际检查显示效果。只完成这一个小改动，保留现有角色、美术和玩法。"
+          text "◇"
+          text "Editing UI contract"
+          svg_root
+          text "READ DOC"
+          text "UI_CONTRACT.md"
+          text "✓"
+          svg_root
+          text "WRITE DOC"
+          text "UI_CONTRACT.md"
+          text "✓"
+          text "◇"
+          text "思考中…"
+          container [ref=8674, loc=unstable]
+            svg_root
+            text "PLAYTEST"
+            text "冒烟体检 4/4 通过"
+            text "✓"
+          text "✓"
+          text "加载"
+          text "Game loaded (session 1): __gpReady=true canvas=true"
+          text "✓"
+          text "运行"
+          text "rAF ≈120fps"
+          text "✓"
+          text "操作"
+          text "generic input dispatched (taps · Space · arrows · held key · drag)"
+          text "✓"
+          text "分辨率"
+          text "layout consistent across devicePixelRatio 1/2"
+          button [ref=8667, loc=unstable]
+            image
+          text "◇"
+          text "Adjusting controlsBar position"
+          container
+            svg_root
+            text "WRITE CODE"
+            text "game.ts"
+            text "✗"
+          container
+            text "◇"
+            text "思考中…"
+          container
+            svg_root
+            text "SEARCH CODE"
+            text "✓"
+          container
+            svg_root
+            text "WRITE CODE"
+            text "game.ts"
+            text "✗"
+          container
+            text "◇"
+            text "Figuring out tool issues"
+          container
+            svg_root
+            text "READ CODE"
+            text "game.ts"
+            text "✓"
+          container
+            svg_root
+            text "WRITE CODE"
+            text "game.ts"
+            text "✓"
+          container
+            text "◇"
+            text "思考中…"
+          container
+            svg_root
+            text "PLAYTEST"
+            text "◜"
+        container
+          button [ref=2892, loc=unstable]
+            svg_root
+            text "全部完成，试玩版就位"
+            container
+              container
+              container
+              container
+              container
+              container
+              container
+              container
+            text "COMPLETE"
+            text "▾"
+          container
+            container
+              container
+              text "确定原创森林弹射的画面与音效方向"
+            container
+              container
+              text "准备团雀、浣熊、鸟蛋与森林场景素材"
+            container
+              container
+              text "搭建弹弓、抛物线与堡垒物理玩法"
+            container
+              container
+              text "接入鼓气冲撞、材质破坏与连锁反馈"
+            container
+              container
+              text "加入三关流程、触屏操作与结算界面"
+            container
+              container
+              text "跑通发射、坍塌、重开与移动端体验"
+            container
+              container
+              text "完成可玩的浏览器版本"
+        container
+          text "制作中"
+          container
+            container
+            container
+            container
+            container
+            container
+            container
+            container
+            container
+            container
+            container
+          text "00:52"
+        container
+          button [ref=1187, loc=unstable]
+            text "+"
+          container
+            textbox [ref=1184, loc=css:textarea[placeholder="描述下一步想修改什么…"]]
+              text "描述下一步想修改什么…"
+              container
+            button [ref=1183, loc=unstable]
+              text "⚡ Smart"
+              text "▲"
+          button [ref=8487, loc=unstable]
+            text "STOP"
+      container
+        container
+          button [ref=1207, loc=unstable]
+            svg_root
+            text "桌面"
+            text "▾"
+          button [ref=1217, loc=unstable]
+            text "↻"
+            text "有改动"
+          button [ref=1219, loc=unstable]
+            svg_root
+          button [ref=1220, loc=unstable]
+            svg_root
+          container
+            container
+            text "BUILDING"
+        iframe [ref=6459, loc=unstable]
+          root
+            canvas
+  alert

@@ -1,0 +1,91 @@
+root
+  status
+    anchor [ref=429, loc=href:/blog/game-slots, url=https://makeplay.ai/blog/game-slots]
+      container
+        text "📢"
+        text "MakePlay 作品位正式上线：多创作，多收获"
+      container
+        text "看详情"
+        text "▶"
+    button "Dismiss" [ref=430, loc=css:button[aria-label="Dismiss"]]
+      text "✕"
+  container
+    container
+      anchor [ref=133, loc=href:/, url=https://makeplay.ai/]
+        svg_root
+        container
+          container
+            text "MAKEPLAY"
+            text ".AI"
+          text "AI GAME BUILDER"
+      container
+      container
+        anchor [ref=159, loc=href:/studio, url=https://makeplay.ai/studio]
+          svg_root
+          text "创作"
+        anchor [ref=179, loc=href:/arcade, url=https://makeplay.ai/arcade]
+          svg_root
+          text "游戏厅"
+        container
+          button [ref=214, loc=unstable]
+            svg_root
+            text "工具"
+            svg_root
+          container
+      anchor "找游戏…" [ref=334, loc=css:a[aria-label="找游戏…"], url=https://makeplay.ai/arcade#search]
+        svg_root
+      button "通知" [ref=474, loc=css:button[aria-label="通知"]]
+        svg_root
+        text "8"
+      button [ref=477, loc=unstable]
+        image
+    container [ref=347, loc=unstable]
+      container
+        text "DIRECT · PLAY · SHARE"
+        heading
+          text "你的游戏"
+        container
+          paragraph
+            text "打开一个项目接着做，或在下面开个新的。"
+          button [ref=354, loc=unstable]
+            image
+            text "How to Start?"
+      container
+        text "还剩 0 个作品位"
+        anchor [ref=495, loc=href:/invite?from=studio_entry, url=https://makeplay.ai/invite?from=studio_entry]
+          text "邀请好友，赚作品位"
+      container
+        text ">"
+        button [ref=360, loc=unstable]
+          text "+"
+        textbox [ref=364, loc=css:textarea[placeholder="想做什么游戏？例如：一只会二段跳的柴犬像素跑酷……"]]
+          text "想做什么游戏？例如：一只会二段跳的柴犬像素跑酷……"
+          container
+        button [ref=367, loc=unstable]
+          text "START ▶︎"
+      note
+        text "！"
+        text "平台严禁创建或发布任何成人内容，包括但不限于含色情、露骨性暗示、软色情擦边的游戏、图文及音视频。"
+      radiogroup "Smart / Quality / Beta"
+        radiobutton [ref=374, loc=unstable]
+          container
+            text "⚡"
+            text "Smart"
+          text "机敏高效 · 几分钟能玩"
+        radiobutton [ref=377, loc=unstable]
+          container
+            text "✦"
+            text "Quality"
+          text "更慢 · 高质"
+      container
+        text "YOUR GAMES ·"
+        text "1"
+      button [ref=447, loc=unstable]
+        text "■ BUILDING"
+        text "这蛋不能忍"
+        text ".game"
+        button [ref=444, loc=unstable]
+          svg_root
+      anchor [ref=52, loc=href:/help/game-slots, url=https://makeplay.ai/help/game-slots]
+        text "怎么获得作品位"
+  alert

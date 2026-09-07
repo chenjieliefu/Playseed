@@ -1,0 +1,32 @@
+.godot/
+**/.godot/
+.playseed/
+__pycache__/
+*.pyc
+.DS_Store
+
+Playseed.app/
+
+# Local credentials and developer-specific configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.claude/
+.venv/
+venv/
+
+# Generated exports, personal documents, and scratch work
+/exports/
+/output/
+/tmp/
+/verification.json
+/我的游戏/
+**/revisions/
+
+# Local validation-gallery links and generated captures
+/验收游戏/* · 预览.png
+/验收游戏/* · 通关画面.png
+/验收游戏/* · 失败画面.png
+/app/_qa*
