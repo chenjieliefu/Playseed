@@ -30,3 +30,5 @@ venv/
 /验收游戏/* · 通关画面.png
 /验收游戏/* · 失败画面.png
 /app/_qa*
+/app/qa_*.gd
+/app/qa_*.gd.uid

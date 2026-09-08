@@ -24,17 +24,25 @@ func setup(owner_ui: Control) -> void:
 	revision = int(host.current.revision)
 	folder = host.game_directory_for(host.current).path_join("audio-library")
 	theme = host.theme.duplicate()
-	theme.set_stylebox("panel", "AcceptDialog", host.style(Color("fbfaf4")))
+	var audio_surface: StyleBoxFlat = host.composer_surface()
+	audio_surface.bg_color = Color("fbfaf4")
+	# The borderless viewport clips outer shadows into square corner patches.
+	audio_surface.shadow_size = 0
+	audio_surface.content_margin_top = 22
+	audio_surface.content_margin_bottom = 18
+	theme.set_stylebox("panel", "AcceptDialog", audio_surface)
 	for state in ["normal", "focus"]: theme.set_stylebox(state, "LineEdit", host.style(Color("edf1e9")))
 	theme.set_color("font_color", "LineEdit", host.INK)
 	theme.set_color("font_placeholder_color", "LineEdit", host.MUTED)
 	exclusive = true
+	borderless = true
+	transparent = true
 	title = "声音素材与音量"
 	ok_button_text = "关闭"
 	min_size = Vector2i(620, 560)
-	add_theme_stylebox_override("panel", host.style(Color("fbfaf4")))
+	add_theme_stylebox_override("panel", audio_surface)
 	for state in ["normal", "hover", "pressed", "focus"]: get_ok_button().add_theme_stylebox_override(state, host.style(Color("e5eedb")))
-	for state in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]: get_ok_button().add_theme_color_override(state, host.INK)
+	for state in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"]: get_ok_button().add_theme_color_override(state, host.INK)
 	get_ok_button().custom_minimum_size = Vector2(90, 36)
 	confirmed.connect(queue_free)
 	canceled.connect(queue_free)
@@ -42,7 +50,7 @@ func setup(owner_ui: Control) -> void:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 10)
 	add_child(box)
-	box.add_child(host.label("声音素材", 23, host.INK))
+	box.add_child(host.label("声音素材与音量", 23, host.INK))
 	box.add_child(host.label("先试听，再添加到对话。导入和音量设置都不会立即改变已有游戏。", 14, host.MUTED, true))
 	var row := HBoxContainer.new()
 	box.add_child(row)

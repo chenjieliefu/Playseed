@@ -42,6 +42,10 @@ var copy_button: Button
 var export_button: Button
 var cached_key := ""
 var audio_button: Button
+var scope_switch: HBoxContainer
+var scope_ai: Button
+var scope_user: Button
+var extra_material_tools: Button
 
 func setup(owner_ui: Control, toolbar: HBoxContainer) -> void:
 	host = owner_ui
@@ -61,6 +65,18 @@ func setup(owner_ui: Control, toolbar: HBoxContainer) -> void:
 		tab.set_meta("target", target)
 		tab.add_theme_constant_override("h_separation", 7)
 		tabs.add_child(tab)
+	scope_switch = HBoxContainer.new()
+	scope_switch.add_theme_constant_override("separation", 8)
+	add_child(scope_switch)
+	var scope_group := ButtonGroup.new()
+	scope_ai = host.compact(host.button("AI 生成的", func(): pass))
+	scope_user = host.compact(host.button("我添加的", func(): pass))
+	for pill in [scope_ai, scope_user]:
+		pill.toggle_mode = true
+		pill.button_group = scope_group
+		pill.toggled.connect(func(_on: bool): on_scope_changed())
+		scope_switch.add_child(pill)
+	scope_ai.button_pressed = true
 	var filters := HBoxContainer.new()
 	add_child(filters)
 	search = LineEdit.new()
@@ -74,6 +90,7 @@ func setup(owner_ui: Control, toolbar: HBoxContainer) -> void:
 	filters.add_child(search)
 	category = OptionButton.new()
 	category.item_selected.connect(func(_i): render_catalog())
+	host.style_choice_popup(category)
 	filters.add_child(category)
 	notice = host.label("", 13, host.MUTED, true)
 	add_child(notice)
@@ -81,16 +98,34 @@ func setup(owner_ui: Control, toolbar: HBoxContainer) -> void:
 	add_child(import_row)
 	asset_role = OptionButton.new()
 	for role in ["角色", "场景", "道具", "界面", "参考图"]: asset_role.add_item(role)
+	host.style_choice_popup(asset_role)
 	import_row.add_child(asset_role)
 	import_button = host.compact(host.button("导入图片…", func(): import_dialog.popup_centered_ratio(0.7), true))
 	import_row.add_child(import_button)
-	var preview_3d: Button = host.compact(host.button("3D 素材预览 ↗", open_3d_preview))
-	import_row.add_child(preview_3d)
-	import_row.add_child(host.compact(host.button("刷新素材", render_catalog)))
+	var tools_space := Control.new()
+	tools_space.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	import_row.add_child(tools_space)
+	extra_material_tools = host.compact(host.button("更多素材工具 ▾", func(): pass))
+	extra_material_tools.toggle_mode = true
+	extra_material_tools.custom_minimum_size.x = 148
+	var expanded_style: StyleBoxFlat = extra_material_tools.get_theme_stylebox("pressed").duplicate()
+	expanded_style.bg_color = Color("e5eedb")
+	extra_material_tools.add_theme_stylebox_override("pressed", expanded_style)
+	for state in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"]: extra_material_tools.add_theme_color_override(state,host.INK)
+	import_row.add_child(extra_material_tools)
 	var audio_row := HBoxContainer.new()
+	audio_row.add_theme_constant_override("separation", 8)
 	add_child(audio_row)
+	var preview_3d: Button = host.compact(host.button("查看 / 制作简单3D模型 ↗", open_3d_preview))
+	audio_row.add_child(preview_3d)
 	audio_button = host.compact(host.button("声音素材与音量…", open_audio_library))
 	audio_row.add_child(audio_button)
+	audio_row.add_child(host.compact(host.button("模型素材…",open_model_library)))
+	extra_material_tools.toggled.connect(func(enabled):
+		extra_material_tools.text = "收起素材工具 ▴" if enabled else "更多素材工具 ▾"
+		render_catalog()
+		audio_row.visible = enabled and active == "素材" and not ai_scope()
+	)
 	set_meta("audio_row", audio_row)
 	var scroll := ScrollContainer.new()
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -109,6 +144,7 @@ func setup(owner_ui: Control, toolbar: HBoxContainer) -> void:
 	files.fit_to_longest_item = false
 	files.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	files.item_selected.connect(func(_i): load_code())
+	host.style_choice_popup(files)
 	code_actions.add_child(files)
 	copy_button = host.compact(host.button("复制", func(): DisplayServer.clipboard_set(code.text); notice.text = "已复制当前文件。"))
 	code_actions.add_child(copy_button)
@@ -151,12 +187,22 @@ func setup(owner_ui: Control, toolbar: HBoxContainer) -> void:
 	set_meta("scroll", scroll)
 	select_tab("游戏")
 
+func ai_scope() -> bool:
+	return scope_ai.button_pressed
+
+func on_scope_changed() -> void:
+	if content == null or not has_meta("import_row"): return
+	get_meta("import_row").visible = not ai_scope() and active == "素材"
+	get_meta("audio_row").visible = not ai_scope() and active == "素材" and extra_material_tools.button_pressed
+	render_catalog()
+
 func select_tab(target: String) -> void:
 	active = target
 	search.text = ""
 	category.clear()
 	category.add_item("全部分类")
 	if active == "素材":
+		scope_ai.button_pressed = true
 		for value in ["角色", "场景", "道具", "界面"]: category.add_item(value)
 	else:
 		if active == "动画": category.add_item("帧动画")
@@ -170,13 +216,15 @@ func select_tab(target: String) -> void:
 
 func refresh() -> void:
 	visible = active != "游戏"
+	if host.preview_heading != null: host.preview_heading.text = "游戏预览" if active == "游戏" else active+" · "+{"素材":"查看与准备资源","动画":"让物体动起来","特效":"强化事件反馈","扩展":"增加玩法与界面","代码":"查看与导出工程"}.get(active,"")
+	scope_switch.visible = active == "素材"
 	for tab in tabs.get_children():
 		var selected: bool = tab.get_meta("target") == active
-		tab.text = active if selected else ""
+		tab.text = str(tab.get_meta("target"))
 		tab.add_theme_stylebox_override("normal", host.style(Color("e5eedb") if selected else Color("f4f6f2")))
 	get_meta("filters").visible = active not in ["游戏", "代码"]
-	get_meta("import_row").visible = active == "素材"
-	get_meta("audio_row").visible = active == "素材"
+	get_meta("import_row").visible = active == "素材" and not ai_scope()
+	get_meta("audio_row").visible = active == "素材" and not ai_scope() and extra_material_tools.button_pressed
 	audio_button.disabled = host.current.is_empty()
 	get_meta("scroll").visible = active != "代码"
 	code_box.visible = active == "代码"
@@ -224,6 +272,9 @@ func import_image(path: String, role_override: String = "", task: String = "") -
 
 func propose(text: String) -> void:
 	if host.busy or host.current.is_empty(): return
+	if not host.input.text.strip_edges().is_empty():
+		notice.text = "输入框里还有你写的内容，请先发送或清空，再选择素材。"
+		return
 	host.input.text = text
 	host.composer_mode.select(1 if not host.made_game.is_empty() and host.current.get("status", "") == "confirmed" else 0)
 	host.update_buttons()
@@ -236,6 +287,41 @@ func edit_sprite(entry: Dictionary) -> void:
 	host.add_child(editor)
 	editor.setup(host, entry)
 
+func image_entries(saved: Array, ai_view: bool) -> Array:
+	var result: Array = []
+	var folder = revision_path().path_join("assets")
+	var recorded := {}
+	for original in saved: recorded[original.id] = true
+	for original in saved:
+		var item: Dictionary = original.duplicate(true)
+		var in_game = FileAccess.file_exists(folder.path_join(str(item.id)+".png"))
+		var generated = item.has("generation")
+		if (ai_view and generated) or (not ai_view and not generated):
+			item["status_label"] = "已在游戏中" if in_game else "未放入游戏"
+			if in_game and not FileAccess.file_exists(host.game_directory_for(host.current).path_join("library/%s.png" % item.id)):
+				item["file_path"] = folder.path_join(str(item.id)+".png")
+			result.append(item)
+	if ai_view and DirAccess.dir_exists_absolute(folder):
+		for file in DirAccess.get_files_at(folder):
+			if not file.ends_with(".png") or recorded.has(file.get_basename()): continue
+			var img = Image.load_from_file(folder.path_join(file))
+			if img == null: continue
+			result.append({"id":file.get_basename(),"name":"图片 "+file.left(8),"role":"道具","width":img.get_width(),"height":img.get_height(),"file_path":folder.path_join(file),"status_label":"已在游戏中"})
+	return result
+
+func redesign_image(entry: Dictionary) -> void:
+	if host.busy or host.current.is_empty(): return
+	if not host.input.text.strip_edges().is_empty():
+		notice.text = "输入框里还有你写的内容，请先发送或清空，再选择素材。"
+		return
+	host.pending_asset_generation = {}
+	var reference_path = host.game_directory_for(host.current).path_join("library/%s.png" % entry.id)
+	host.style_reference_selection[host.style_reference_key()] = str(entry.id) if FileAccess.file_exists(reference_path) else ""
+	var prompt = "生成图片：重新设计「%s」，用途是%s。希望调整：" % [entry.name, entry.role]
+	host.pending_asset_generation = {"idea_id":host.current.id,"revision":host.current.revision,"prefix":prompt,"role":entry.role}
+	propose(prompt)
+	notice.text = "补充你不满意的地方后发送。新图先预览、再采用；原图和现有游戏保留。" + (" 已把原图作为参考。" if FileAccess.file_exists(reference_path) else " 原图不在素材库，本次按文字描述生成。")
+
 func render_catalog() -> void:
 	if active == "代码" or active == "游戏": return
 	host.clear_children(content)
@@ -244,16 +330,28 @@ func render_catalog() -> void:
 	var entries: Array = []
 	if active == "素材":
 		var manifest: Dictionary = host.read_json(host.game_directory_for(host.current).path_join("library/library.json"))
-		entries = manifest.get("assets", [])
+		var saved_entries: Array = manifest.get("assets", [])
+		var ai_view := ai_scope()
+		get_meta("import_row").visible = not ai_view
+		get_meta("audio_row").visible = not ai_view and extra_material_tools.button_pressed
+		entries = image_entries(saved_entries, ai_view)
+		notice.text = "制作过程中 AI 生成的图片都收在这里；选一张可以送回对话重新设计。" if ai_view else "你上传的图片都收在这里，原件不会改动；未放入游戏的可以按它生成。"
+		var guide = host.panel(content)
+		guide.add_child(host.label("AI 生成的" if ai_view else "我添加的",18,host.INK))
+		guide.add_child(host.label("%d 张 · 已在游戏中的可以选中重新设计。" % entries.size() if ai_view else "%d 张 · 点‘用于游戏’告诉 AI 怎么用它。" % entries.size(),14,host.MUTED,true))
+		if ai_view and entries.is_empty():
+			guide.add_child(host.label("制作游戏时让 AI 生成的素材会收在这里。",14,host.MUTED,true))
 		render_models()
-		notice.text = "%d 张图片 · 发送消息时，AI 会查看你提到的图片及最近导入的图片，每轮最多六张。导入不会立即改变游戏。" % entries.size()
+
 	else:
 		entries = CATALOG.get(active, []).duplicate()
 		if active == "动画":
 			var manifest: Dictionary = host.read_json(host.game_directory_for(host.current).path_join("library/library.json"))
 			for asset in manifest.get("assets", []):
 				if asset.has("animation"): entries.push_front(asset)
-		notice.text = "2D " + active + " · 选择后发送给 AI，生成新版本再试玩验收。" + ("下方为实际效果预览。" if active != "扩展" else "会结合当前玩法整合。")
+		notice.text = {"动画":"动画：让角色或物品动起来，例如登场、悬浮、受击变形。", "特效":"特效：给命中、拾取或移动增加短暂视觉反馈。", "扩展":"扩展：给游戏增加玩法或界面，例如生命、金币、暂停和波次。"}.get(active,"") + " 下方是可选建议，不是当前游戏已启用的功能；添加到对话后确认修改，再生成新版本。"
+		if host.made_game.get("format","") == "room3d-v1":
+			notice.text += " 这些预设目前只接通2D，当前3D项目暂不能应用。"
 	var count := 0
 	var row: HBoxContainer
 	for entry in entries:
@@ -275,7 +373,7 @@ func render_catalog() -> void:
 			var picture := TextureRect.new()
 			picture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			picture.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			var image := Image.load_from_file(host.game_directory_for(host.current).path_join("library/%s.png" % entry.id))
+			var image := Image.load_from_file(str(entry.get("file_path",host.game_directory_for(host.current).path_join("library/%s.png" % entry.id))))
 			if image != null and not image.is_empty():
 				var ratio := minf(1.0, 512.0 / maxf(image.get_width(), image.get_height()))
 				if ratio < 1.0 and active != "动画": image.resize(maxi(1, int(image.get_width() * ratio)), maxi(1, int(image.get_height() * ratio)))
@@ -302,16 +400,23 @@ func render_catalog() -> void:
 			prompt = entry[4]
 		card.add_child(host.label(name, 16, host.INK, true))
 		card.add_child(host.label(desc, 13, host.MUTED, true))
-		var action: Button = host.compact(host.button("添加到对话", func(): propose(prompt)))
-		action.disabled = host.busy or host.current.is_empty()
-		card.add_child(action)
-		if is_asset:
+		if is_asset and active == "素材":
+			var in_game: bool = str(entry.get("status_label", "")) == "已在游戏中"
+			card.add_child(host.label(str(entry.get("status_label", "")), 12, Color("4f7a44") if in_game else host.MUTED, true))
+			var main: Button = host.compact(host.button("重新设计这张" if in_game else "用于游戏", func(): (redesign_image(entry) if in_game else propose(prompt))))
+			main.disabled = host.busy or host.current.is_empty() or (in_game and host.current.get("status", "") != "confirmed")
+			card.add_child(main)
+		else:
+			var action: Button = host.compact(host.button("添加到对话", func(): propose(prompt)))
+			action.disabled = host.busy or host.current.is_empty() or (active != "素材" and host.made_game.get("format","") == "room3d-v1")
+			card.add_child(action)
+		if is_asset and not entry.has("file_path"):
 			var configure: Button = host.compact(host.button("切图与帧动画", func(): edit_sprite(entry)))
 			configure.disabled = host.busy or host.current.get("status", "") != "confirmed"
 			card.add_child(configure)
 		count += 1
-	if count == 0:
-		content.add_child(host.label("还没有匹配的内容。" if not needle.is_empty() else "先为这个项目导入一张图片吧。" if active == "素材" else "这个分类暂时没有内容。", 16, host.MUTED, true))
+	if count == 0 and (active != "素材" or not needle.is_empty() or selected != "全部分类"):
+		content.add_child(host.label("还没有匹配的内容。" if not needle.is_empty() else "还没有图片。可以生成一张，或在“我添加的”里上传。" if active == "素材" else "这个分类暂时没有内容。", 16, host.MUTED, true))
 
 func open_3d_preview(model_id: String = "") -> void:
 	var python: String = OS.get_environment("PLAYSEED_PYTHON") if OS.has_environment("PLAYSEED_PYTHON") else "/Library/Frameworks/Python.framework/Versions/3.11/bin/python3"
@@ -321,15 +426,24 @@ func open_3d_preview(model_id: String = "") -> void:
 	notice.text = "已请求打开3D模型预览。补齐资料并添加到对话，制作新版本后才会入场。" if process > 0 else "预览未能启动，请检查本机运行环境。"
 
 func render_models() -> void:
-	content.add_child(host.compact(host.button("模型素材与来源…",open_model_library)))
-	var folder: String = host.game_directory_for(host.current).path_join("model-library")
-	if not DirAccess.dir_exists_absolute(folder): return
-	for filename in DirAccess.get_files_at(folder):
-		if not filename.ends_with(".glb"): continue
-		var card: VBoxContainer = host.panel(content)
-		card.add_child(host.label("3D 道具 · " + filename.left(8), 16, host.INK))
-		card.add_child(host.label("已保存在模型库 · 通过模型素材入口补资料、预览和使用", 13, host.MUTED))
-		card.add_child(host.compact(host.button("在文件夹中查看", func(): OS.shell_open(folder))))
+	var ai_view = ai_scope()
+	if not ai_view and not extra_material_tools.button_pressed: return
+	var base: String = revision_path() if ai_view else host.game_directory_for(host.current)
+	var folder: String = base.path_join("models" if ai_view else "model-library")
+	var models: Dictionary = host.read_json(folder.path_join("library.json"))
+	if DirAccess.dir_exists_absolute(folder):
+		for filename in DirAccess.get_files_at(folder):
+			if not filename.ends_with(".glb"): continue
+			var name = "3D模型 · "+filename.left(8)
+			for item in models.get("models",[]):
+				if item.id == filename.get_basename(): name = item.name
+			var card: VBoxContainer = host.panel(content)
+			card.add_child(host.label(name,16,host.INK))
+			card.add_child(host.label("当前版本模型文件" if ai_view else "项目模型库 · 用于后续版本",13,host.MUTED))
+	var audio_folder = base.path_join("audio" if ai_view else "audio-library")
+	if DirAccess.dir_exists_absolute(audio_folder):
+		for filename in DirAccess.get_files_at(audio_folder):
+			if filename.ends_with(".wav"): content.add_child(host.label("声音文件 · "+filename,13,host.MUTED,true))
 
 func open_audio_library() -> void:
 	if host.current.is_empty(): return

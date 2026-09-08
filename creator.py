@@ -1,6 +1,11 @@
 """Idea conversations and confirmed briefs, independent of game templates.
 
 Confirmation saves a plan. It never creates a playable project or implies a build.
+
+delivery records how the creator expects friends to play the game:
+'web' (a link opening in the browser) or 'native' (download and install).
+It is a first-creation expectation, not a capability promise: web builds are
+not connected yet and native formats stay the only real build path.
 """
 import json
 import re
@@ -94,6 +99,9 @@ def path_for(api, idea_id):
 
 def handle(request, job, api):
     idea_id = request.get('idea_id')
+    delivery = request.get('delivery')
+    if delivery not in (None, 'native', 'web'):
+        raise ValueError('请选择有效的玩的方式：下载到电脑或发链接在网页玩。')
     previous = api.read_json(path_for(api, idea_id)) if idea_id else None
     selected_folder = None
     attachment = request.get('attachment')
@@ -126,6 +134,7 @@ def handle(request, job, api):
         title = Path(selected_folder).name
         draft = {'id': uuid.uuid4().hex, 'created_at':stamp, 'updated_at':stamp,
                  'revision':0, 'title':title, 'project_name':title, 'project_directory':selected_folder,
+                 'delivery':delivery,
                  'status':'drafting', 'ready':False, 'questions':[], 'history':[],
                  'confirmed_revision':None, 'confirmed_at':None, 'pending_first_prompt':prompt,
                  'messages':[{'role':'user','text':prompt,'created_at':stamp}],
@@ -205,7 +214,7 @@ def handle(request, job, api):
     if previous:
         data = previous
     else:
-        data = {'id': uuid.uuid4().hex, 'created_at': stamp, 'revision': 0, 'messages': [], 'history': []}
+        data = {'id': uuid.uuid4().hex, 'created_at': stamp, 'revision': 0, 'messages': [], 'history': [], 'delivery': None}
         if selected_folder is not None:
             data['project_directory'] = selected_folder
     # Every previous plan remains in history, including its confirmation state.

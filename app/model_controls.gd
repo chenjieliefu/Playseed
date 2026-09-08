@@ -22,6 +22,7 @@ func setup(owner_ui: Control, model_state: OptionButton, effort_state: OptionBut
 		box.content_margin_top = 6; box.content_margin_bottom = 6
 		add_theme_stylebox_override(state, box)
 		add_theme_color_override("font_" + ("color" if state == "normal" else state + "_color"), host.INK)
+	add_theme_color_override("font_hover_pressed_color", host.INK)
 	popup = PopupPanel.new()
 	popup.add_theme_stylebox_override("panel", host.composer_surface())
 	add_child(popup)

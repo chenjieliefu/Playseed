@@ -24,23 +24,32 @@ func setup(owner_ui: Control) -> void:
 	revision = int(host.current.revision)
 	folder = host.game_directory_for(host.current).path_join("model-library")
 	theme = host.theme.duplicate()
-	theme.set_stylebox("panel","AcceptDialog",host.style(Color("fbfaf4")))
-	for state in ["normal","focus"]: theme.set_stylebox(state,"LineEdit",host.style(Color("edf1e9")))
-	theme.set_color("font_color","LineEdit",host.INK)
-	theme.set_color("font_placeholder_color","LineEdit",host.MUTED)
+	var model_surface: StyleBoxFlat = host.composer_surface()
+	model_surface.bg_color = Color("fbfaf4")
+	# The borderless viewport clips outer shadows into square corner patches.
+	model_surface.shadow_size = 0
+	model_surface.content_margin_top = 22
+	model_surface.content_margin_bottom = 18
+	theme.set_stylebox("panel", "AcceptDialog", model_surface)
+	for state in ["normal", "focus"]: theme.set_stylebox(state, "LineEdit", host.style(Color("edf1e9")))
+	theme.set_color("font_color", "LineEdit", host.INK)
+	theme.set_color("font_placeholder_color", "LineEdit", host.MUTED)
 	exclusive = true
+	borderless = true
+	transparent = true
 	title = "模型素材与来源"
 	ok_button_text = "关闭"
-	min_size = Vector2i(620,600)
-	for state in ["normal","hover","pressed","focus"]: get_ok_button().add_theme_stylebox_override(state,host.style(Color("e5eedb")))
-	for state in ["font_color","font_hover_color","font_pressed_color","font_focus_color"]: get_ok_button().add_theme_color_override(state,host.INK)
+	min_size = Vector2i(620, 600)
+	for state in ["normal", "hover", "pressed", "focus"]: get_ok_button().add_theme_stylebox_override(state, host.style(Color("e5eedb")))
+	for state in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"]: get_ok_button().add_theme_color_override(state, host.INK)
 	confirmed.connect(queue_free)
 	canceled.connect(queue_free)
 	close_requested.connect(queue_free)
 	var box = VBoxContainer.new()
-	box.add_theme_constant_override("separation",9)
+	box.add_theme_constant_override("separation", 9)
 	add_child(box)
-	box.add_child(host.label("模型素材",23,host.INK))
+	box.add_child(host.label("模型素材与来源", 23, host.INK))
+	box.add_child(host.label("导入或制作模型，补齐资料后添加到对话，用于替换 3D 障碍外观。", 14, host.MUTED, true))
 	box.add_child(host.compact(host.button("描述道具，用 Blender 制作…",start_generation)))
 	box.add_child(host.label("静态基础色GLB可用作3D障碍外观。模型等比放入外盒，碰撞按整块盒形计算，镂空暂不能穿过。",14,host.MUTED,true))
 	box.add_child(host.compact(host.button("选择新 GLB…",func(): picker.popup_centered_ratio(.7))))

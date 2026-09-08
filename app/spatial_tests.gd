@@ -18,6 +18,7 @@ func run_tests() -> void:
 	host.dimension_choices = {}
 	host.current = {"id":"spatial_ui_fixture","title":"温室寻物","revision":1,"status":"confirmed","confirmed_revision":1,"ready":true,"messages":[],"questions":[],
 		"plan":{"title":"温室寻物","premise":"在3D温室寻找两枚种子。","player_goal":"收集后从出口离开。","core_loop":["行走","靠近收集"],"visual_style":"低多边形", "first_version":["3D房间","碰撞与交互"],"asset_plan":["使用几何体临时形象"],"later":[],"assumptions":[]}}
+	host.show_idea()
 	host.navigate("workspace")
 	assert(host.dimension_picker.visible and host.dimension_picker.selected == 0)
 	host.dimension_picker.select(1)

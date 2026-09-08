@@ -3,6 +3,7 @@ extends RefCounted
 static func content(host: Control, dialog: ConfirmationDialog, heading: String, subtitle: String, danger := false) -> VBoxContainer:
 	dialog.size = Vector2i(540, 440)
 	dialog.borderless = true
+	dialog.transparent = true
 	dialog.exclusive = true
 	dialog.cancel_button_text = "取消"
 	dialog.theme = host.theme.duplicate()

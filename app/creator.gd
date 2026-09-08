@@ -58,6 +58,12 @@ var workspace_model_controls: Button
 var home_plus: MenuButton
 var home_model_picker: OptionButton
 var home_effort_picker: OptionButton
+var delivery_undecided: Button
+var delivery_native: Button
+var delivery_web: Button
+var delivery_note: Label
+var delivery_group := ButtonGroup.new()
+var home_mascot: Control
 var home_file_dialog: FileDialog
 var home_selected_folder := ""
 var home_attachment: Dictionary = {}
@@ -74,6 +80,7 @@ var prepare: Button
 var show_build := false
 var made_game: Dictionary = {}
 var build_game_button: Button
+var preview_heading: Label
 var dimension_picker: OptionButton
 var dimension_choices: Dictionary = {}
 var play_game_button: Button
@@ -283,6 +290,11 @@ func selected_home_effort() -> String:
 		return "medium"
 	return str(home_effort_picker.get_item_metadata(home_effort_picker.selected))
 
+func home_mascot_say(message: String) -> void:
+	var input_rect := home_input.get_global_rect()
+	var base := dashboard.get_global_rect()
+	home_mascot.say(message, Rect2(input_rect.position - base.position, input_rect.size))
+
 func set_home_hint(message: String) -> void:
 	if hint == null:
 		return
@@ -353,9 +365,14 @@ func launch_home_creation() -> void:
 	show_idea()
 	navigate("workspace")
 	var request := {"action": "discuss", "prompt": first_prompt, "project_directory": home_selected_folder, "model": selected_home_model(), "reasoning_effort": selected_home_effort()}
+	var pressed_delivery: Button = delivery_group.get_pressed_button()
+	var delivery: String = str(pressed_delivery.get_meta("value")) if pressed_delivery != null else ""
+	if not delivery.is_empty():
+		request.delivery = delivery
 	if not home_attachment.is_empty():
 		request.attachment = home_attachment
 	start_job(request)
+	delivery_undecided.button_pressed = true
 	if busy:
 		input.text = ""
 		home_input.text = ""
@@ -404,6 +421,18 @@ func close_details() -> void:
 	show_build = false
 	update_buttons()
 
+func delivery_pill(parent: Node, text_value: String, value: String) -> Button:
+	var b := compact(button(text_value, func(): pass))
+	b.toggle_mode = true
+	b.button_group = delivery_group
+	b.set_meta("value", value)
+	b.toggled.connect(func(is_on: bool):
+		if is_on and delivery_note != null:
+			delivery_note.text = {"native": "做成下载后在电脑上打开玩的游戏。", "web": "做成网页，把链接发给朋友就能玩。"}.get(value, "")
+	)
+	parent.add_child(b)
+	return b
+
 func compact(b: Button) -> Button:
 	b.custom_minimum_size.y = 34
 	b.add_theme_font_size_override("font_size", 13)
@@ -421,7 +450,7 @@ func round_action(b: Button, size_px: int, primary: bool = false, font_size: int
 	b.custom_minimum_size = Vector2(size_px, size_px)
 	b.add_theme_font_size_override("font_size", font_size)
 	b.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	for color_name in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+	for color_name in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"]:
 		b.add_theme_color_override(color_name, INK)
 	b.add_theme_color_override("font_disabled_color", DISABLED_INK)
 	var colors := button_states(primary)
@@ -449,7 +478,7 @@ func style_selector(picker_control: OptionButton, width: int) -> OptionButton:
 			box.set_border_width_all(2)
 			box.border_color = FOCUS_LINE
 		picker_control.add_theme_stylebox_override(state_name, box)
-	for color_name in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+	for color_name in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"]:
 		picker_control.add_theme_color_override(color_name, INK)
 	picker_control.add_theme_color_override("font_disabled_color", DISABLED_INK)
 	style_choice_popup(picker_control)
@@ -665,7 +694,7 @@ func button(text: String, action: Callable, primary: bool = false) -> Button:
 			box.set_border_width_all(2)
 			box.border_color = FOCUS_LINE
 		b.add_theme_stylebox_override(state_name, box)
-	for name in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+	for name in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"]:
 		b.add_theme_color_override(name, INK)
 	b.add_theme_color_override("font_disabled_color", DISABLED_INK)
 	b.pressed.connect(action)
@@ -690,12 +719,41 @@ func build_ui() -> void:
 	var option_states := button_states(false)
 	for state in option_states:
 		t.set_stylebox(state, "OptionButton", style(option_states[state]))
-	for state in ["font_hover_color", "font_pressed_color", "font_focus_color"]:
+	for state in ["font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"]:
 		t.set_color(state, "OptionButton", INK)
 	t.set_color("font_disabled_color", "OptionButton", DISABLED_INK)
 	t.set_stylebox("panel", "PopupMenu", style(POPUP))
 	t.set_color("font_color", "OptionButton", INK)
 	t.set_color("font_color", "PopupMenu", INK)
+	# Popups that are not styled individually keep the product light highlight, never the system dark bar.
+	var popup_hover := style(Color("eaf1e1"))
+	popup_hover.set_corner_radius_all(8)
+	t.set_stylebox("hover", "PopupMenu", popup_hover)
+	t.set_stylebox("pressed", "PopupMenu", popup_hover)
+	t.set_color("font_hover_color", "PopupMenu", INK)
+	t.set_color("font_pressed_color", "PopupMenu", INK)
+	# Selected text inside inputs and the code view stays in the light palette.
+	for text_kind in ["LineEdit", "TextEdit"]:
+		t.set_color("selection_color", text_kind, Color("cfe2b8"))
+		t.set_color("caret_color", text_kind, ACCENT_INK)
+	for check_state in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"]:
+		t.set_color(check_state, "CheckButton", INK)
+	t.set_color("font_disabled_color", "CheckButton", DISABLED_INK)
+	# Tooltips keep the light product look instead of the system dark bar.
+	var tip_panel := style(CARD)
+	tip_panel.set_corner_radius_all(10)
+	tip_panel.set_border_width_all(1)
+	tip_panel.border_color = LINE
+	tip_panel.shadow_color = Color(0.12, 0.22, 0.14, 0.08)
+	tip_panel.shadow_size = 8
+	tip_panel.shadow_offset = Vector2(0, 3)
+	tip_panel.content_margin_left = 10
+	tip_panel.content_margin_right = 10
+	tip_panel.content_margin_top = 7
+	tip_panel.content_margin_bottom = 7
+	t.set_stylebox("panel", "TooltipPanel", tip_panel)
+	t.set_color("font_color", "TooltipLabel", INK)
+	t.set_font_size("font_size", "TooltipLabel", 13)
 	# Keep the hit area comfortable while drawing a slimmer, quiet scroll thumb.
 	var track := StyleBoxFlat.new()
 	track.bg_color = Color.TRANSPARENT
@@ -787,7 +845,7 @@ func build_ui() -> void:
 	account_button.icon = load("res://assets/playseed-mascot-farmer-v1.png")
 	account_button.add_theme_constant_override("icon_max_width", 40)
 	side.add_child(account_button)
-	sidebar_footer = label("本机创作 · 0.8.37", 12, MUTED)
+	sidebar_footer = label("本机创作 · 0.8.39", 12, MUTED)
 	side.add_child(sidebar_footer)
 	var margin := MarginContainer.new()
 	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -1017,7 +1075,8 @@ func build_ui() -> void:
 	var right := panel(body)
 	var preview_toolbar := HBoxContainer.new()
 	right.add_child(preview_toolbar)
-	preview_toolbar.add_child(label("游戏预览", 14, MUTED))
+	preview_heading = label("游戏预览",14,MUTED)
+	preview_toolbar.add_child(preview_heading)
 	var preview_space := Control.new()
 	preview_space.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	preview_toolbar.add_child(preview_space)
@@ -1397,7 +1456,8 @@ func show_asset_preparation() -> void:
 	add_asset_binding(guide, selector, tasks)
 	var split_button := button("拆成单张图片任务", func(): created_action("prepare_asset_split", {"task": str(tasks[selector.selected])}))
 	split_button.disabled = busy or not str(tasks[selector.selected]) in current.plan.asset_plan
-	split_button.tooltip_text = "整理拆分建议，确认后再逐张准备；不会生成图片"
+	split_button.text = "这一项有多个角色？分别准备…"
+	split_button.tooltip_text = "例如小鸟和小猪：拆开后逐张生成，避免混在一张图片里。"
 	selector.item_selected.connect(func(i): split_button.disabled = busy or not str(tasks[i]) in current.plan.asset_plan)
 	guide.add_child(split_button)
 
@@ -1542,7 +1602,8 @@ func submit_composer() -> void:
 			if pending_asset_generation.idea_id != current.get("id", "") or pending_asset_generation.revision != current.get("revision", 0):
 				status.text = "方案或项目已变化，请重新选择素材任务。"
 				return
-			request.task = pending_asset_generation.task
+			if pending_asset_generation.has("task"): request.task = pending_asset_generation.task
+			if pending_asset_generation.has("role"): request.role = pending_asset_generation.role
 		created_action("generate_asset", request)
 		if busy:
 			input.text = ""
@@ -1674,6 +1735,8 @@ func build_home(outer: VBoxContainer) -> void:
 	margins.anchor_left = 0.08
 	margins.anchor_right = 0.92
 	dashboard.add_child(margins)
+	home_mascot = load("res://home_mascot.gd").new()
+	dashboard.add_child(home_mascot)
 	var home := VBoxContainer.new()
 	home.alignment = BoxContainer.ALIGNMENT_CENTER
 	home.add_theme_constant_override("separation", 20)
@@ -1731,6 +1794,22 @@ func build_home(outer: VBoxContainer) -> void:
 		composer.queue_redraw()
 	)
 	content.add_child(home_input)
+	var delivery_row := HBoxContainer.new()
+	delivery_row.add_theme_constant_override("separation", 10)
+	content.add_child(delivery_row)
+	var delivery_title := label("做好后，朋友怎么玩到？", 13, MUTED)
+	delivery_title.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	delivery_row.add_child(delivery_title)
+	delivery_undecided = delivery_pill(delivery_row, "还没想好", "")
+	delivery_native = delivery_pill(delivery_row, "下载到电脑玩", "native")
+	delivery_web = delivery_pill(delivery_row, "发链接在网页玩", "web")
+	var delivery_space := Control.new()
+	delivery_space.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	delivery_row.add_child(delivery_space)
+	delivery_note = label("", 13, MUTED)
+	delivery_note.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	delivery_row.add_child(delivery_note)
+	delivery_undecided.button_pressed = true
 	hint = label("", 13, MUTED, true)
 	hint.visible = false
 	content.add_child(hint)
@@ -1826,7 +1905,7 @@ func begin_from_home() -> void:
 		set_home_hint("上一个任务还在进行。可以先写好这句，等这轮结束再开始。")
 		return
 	if home_input.text.strip_edges().is_empty():
-		set_home_hint("先写一句你的游戏想法，几个字也可以。")
+		home_mascot_say("先写一句你的游戏想法，几个字也可以。")
 		home_input.grab_focus()
 		return
 	pending_home_prompt = home_input.text.strip_edges()
@@ -2097,6 +2176,19 @@ func bullets(items: Array) -> String:
 		lines.append("• " + str(item))
 	return "\n".join(lines) if not lines.is_empty() else "暂时没有"
 
+func message_card(is_user: bool) -> VBoxContainer:
+	var row = HBoxContainer.new()
+	chat.add_child(row)
+	var spacer = Control.new()
+	spacer.custom_minimum_size.x = 26
+	if is_user: row.add_child(spacer)
+	var bubble = panel(row)
+	bubble.get_parent().size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bubble.get_parent().add_theme_stylebox_override("panel",style(Color("e0edcf") if is_user else Color("f3f5f1")))
+	if not is_user: row.add_child(spacer)
+	bubble.add_child(label("我" if is_user else "Playseed",14,Color("48652e") if is_user else MUTED))
+	return bubble
+
 func show_idea() -> void:
 	made_game = read_json(game_directory_for(current).path_join("game.json")) if not current.is_empty() else {}
 	game_versions.clear()
@@ -2125,14 +2217,10 @@ func show_idea() -> void:
 		else:
 			flow_label.text = "第 2 步 · 一起理清想法"
 		for message in current.messages:
-			var bubble := panel(chat)
-			if message.role == "user":
-				bubble.get_parent().add_theme_stylebox_override("panel", style(BUBBLE))
-			bubble.add_child(label("你" if message.role == "user" else "Playseed", 14, MUTED))
+			var bubble := message_card(message.role == "user")
 			bubble.add_child(label(message.text, 17, INK, true))
-			for q in message.get("questions", []):
-				bubble.add_child(label(q.question, 17, INK, true))
-		if current.get("status", "") == "confirmed":
+			for q in message.get("questions", []): bubble.add_child(label(q.question, 17, INK, true))
+		if current.get("status", "") == "confirmed" and made_game.is_empty():
 			show_asset_preparation()
 		for q in current.questions:
 			var row := VBoxContainer.new()
@@ -2219,8 +2307,7 @@ func show_idea() -> void:
 	if busy and not pending_prompt.is_empty() and str(current.get("pending_first_prompt", "")) != pending_prompt:
 		if current.is_empty():
 			clear_children(chat)
-		var pending := panel(chat)
-		pending.add_child(label("你", 14, MUTED))
+		var pending := message_card(true)
 		pending.add_child(label(pending_prompt, 17, INK, true))
 	update_effect()
 	show_version_details()
@@ -2243,6 +2330,9 @@ func update_buttons() -> void:
 	effort_picker.disabled = busy
 	home_model_picker.disabled = busy
 	home_effort_picker.disabled = busy
+	for delivery_pill_button in [delivery_undecided, delivery_native, delivery_web]:
+		if delivery_pill_button != null:
+			delivery_pill_button.disabled = busy
 	if workspace_model_controls: workspace_model_controls.refresh()
 	if home_model_controls: home_model_controls.refresh()
 	home_plus.disabled = busy

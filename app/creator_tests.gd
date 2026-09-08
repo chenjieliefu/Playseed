@@ -35,12 +35,13 @@ func run_tests() -> void:
 		require(choice.get_popup().get_theme_icon("radio_checked").resource_path.ends_with("selected-check.svg"), "choice selection uses checkmark instead of default radio dots")
 	require(creator.attachment_button.icon_alignment == HORIZONTAL_ALIGNMENT_CENTER and not creator.attachment_button.expand_icon, "workspace attachment icon must stay centered at fixed size")
 	var preview_entry_found := false
-	for control in creator.resource_tools.get_meta("import_row").get_children():
-		if control is Button and control.text == "3D 素材预览 ↗": preview_entry_found = true
-	require(preview_entry_found, "materials expose the local 3D preview entry")
+	for control in creator.resource_tools.get_meta("audio_row").get_children():
+		if control is Button and control.text == "查看 / 制作简单3D模型 ↗": preview_entry_found = true
+	require(preview_entry_found, "materials expose the local 3D preview entry in the expanded tools row")
 	require(creator.dashboard.visible and not creator.page.visible, "launch enters creation home")
 	creator.begin_from_home()
 	require(creator.sent_request.is_empty() and creator.route == "home", "empty idea does not submit")
+	require(creator.home_mascot != null and creator.home_mascot.visible and creator.hint.text.is_empty(), "empty home submit is answered by the mascot bubble instead of a bare hint line")
 	require(not creator.dashboard is ScrollContainer, "home is a fixed canvas without page scrolling")
 	require(creator.home_garden.mouse_filter == Control.MOUSE_FILTER_IGNORE, "decoration cannot intercept input")
 	require(creator.account_button != null and creator.account_box != null, "sidebar exposes GPT account management")
@@ -67,6 +68,11 @@ func run_tests() -> void:
 	require(not creator.home_attachment.is_empty() and creator.hint.text.contains("参考图"), "home plus attachment is kept for the first creation request")
 	creator.home_model_picker.select(0)
 	creator.home_effort_picker.select(2)
+	require(creator.delivery_undecided != null and creator.delivery_native != null and creator.delivery_web != null, "home asks how friends will play before creating")
+	require(creator.delivery_undecided.button_pressed and not creator.delivery_web.button_pressed and creator.delivery_note.text.is_empty(), "delivery question defaults to undecided with an empty note")
+	require(not creator.delivery_web.text.contains("建设中") and not creator.delivery_native.text.contains("已支持") and creator.delivery_web.tooltip_text.is_empty(), "delivery options carry no status wording or system tooltip")
+	creator.delivery_web.button_pressed = true
+	require(not creator.delivery_undecided.button_pressed and creator.delivery_note.text.contains("网页"), "choosing web shows its product-style note")
 	creator.home_input.text = "我想做自己的解谜游戏"
 	creator.begin_from_home()
 	require(creator.sent_request.is_empty() and creator.pending_home_prompt.contains("解谜游戏"), "home asks for a project folder before creating")
@@ -78,6 +84,8 @@ func run_tests() -> void:
 	require(creator.sent_request.reasoning_effort == "high", "home-selected reasoning strength reaches the first creation request")
 	require(creator.model_picker.get_item_text(creator.model_picker.selected) == "GPT-6 Astra" and creator.selected_effort() == "high", "home model and strength carry into the workspace")
 	require(creator.sent_request.has("attachment") and creator.sent_request.attachment.role == "参考图", "home reference image reaches the first creation request")
+	require(creator.sent_request.delivery == "web", "home delivery choice reaches the first creation request")
+	require(creator.delivery_undecided.button_pressed and not creator.delivery_web.button_pressed, "delivery choice resets to undecided after submission")
 	require(creator.route == "workspace" and creator.page.visible, "home proceeds to real conversation workspace")
 	creator.navigate("library")
 	require(creator.library.visible and not creator.page.visible, "project library route works")
@@ -131,7 +139,7 @@ func run_tests() -> void:
 	require(creator.plan_box.visible and creator.effect_box.visible and creator.detail_overlay.visible, "plan opens over the preserved preview")
 	require(creator.input.get_theme_stylebox("read_only").bg_color == creator.input.get_theme_stylebox("normal").bg_color, "thinking keeps the input surface bright")
 	require(creator.progress_bar.visible and creator.cancel.visible and not creator.home_button.disabled, "thinking has local progress and readable navigation")
-	require(creator.chat.get_child(-1).get_child(0).get_child(-1).text == "等待中的游戏想法", "pending message survives inspecting another tab")
+	require(visible_labels(creator.chat.get_child(-1)).contains("等待中的游戏想法"), "pending message survives inspecting another tab")
 	creator.select_detail("版本")
 	require(creator.history_box.visible and not creator.plan_box.visible, "history has a separate view")
 	require(not creator.game_versions.visible and creator.version_list != null and creator.version_heading != null, "history uses a readable list and detail layout")
@@ -197,6 +205,10 @@ func run_tests() -> void:
 	creator.resource_tools.search.text_changed.emit("悬浮")
 	require(creator.resource_tools.content.get_child_count() == 1, "resource search filters the catalog")
 	var animation_card = creator.resource_tools.content.get_child(0).get_child(0).get_child(0)
+	creator.input.text = "保留我的草稿"
+	animation_card.get_child(-1).pressed.emit()
+	require(creator.input.text == "保留我的草稿", "resource suggestions preserve unsent input")
+	creator.input.text = ""
 	animation_card.get_child(-1).pressed.emit()
 	require(creator.input.text.contains("悬浮"), "resource choice is placed into the existing conversation")
 	creator.resource_tools.select_tab("特效")
@@ -206,6 +218,25 @@ func run_tests() -> void:
 	creator.resource_tools.render_catalog()
 	require(creator.resource_tools.content.get_child_count() == 1, "extension category filter works")
 	creator.resource_tools.select_tab("素材")
+	require(creator.resource_tools.scope_ai.text == "AI 生成的" and creator.resource_tools.scope_user.text == "我添加的" and creator.resource_tools.scope_ai.button_pressed, "material sources have two clear names")
+	creator.resource_tools.scope_user.button_pressed = true
+	require(creator.resource_tools.get_meta("import_row").visible, "user scope shows the import row")
+	creator.resource_tools.scope_ai.button_pressed = true
+	require(not creator.resource_tools.get_meta("import_row").visible, "AI scope hides the import row")
+	var generated = {"id":"test-generated", "name":"小鸟", "role":"角色", "width":32,"height":32,"generation":{}}
+	var uploaded = {"id":"test-uploaded", "name":"背景", "role":"场景", "width":32,"height":32}
+	var game_assets = creator.resource_tools.image_entries([generated,uploaded],true)
+	var own_assets = creator.resource_tools.image_entries([generated,uploaded],false)
+	require(game_assets.size() == 1 and game_assets[0].id == generated.id and own_assets.size() == 1 and own_assets[0].id == uploaded.id, "generated and uploaded images are classified by real provenance")
+	creator.input.text = ""
+	creator.resource_tools.redesign_image(generated)
+	require(creator.input.text.begins_with("生成图片：重新设计「小鸟」") and creator.resource_tools.notice.text.contains("原图不在素材库"), "single image redesign uses generation route and explains missing reference")
+	creator.submit_composer()
+	require(creator.sent_request.action == "generate_asset" and creator.sent_request.role == "角色" and not creator.sent_request.has("task"), "redesign preserves image role without inventing a task association")
+	creator.input.text = ""
+	for tab in creator.resource_tools.tabs.get_children():
+		require(tab.text == str(tab.get_meta("target")), "all workspace tabs have visible names")
+
 	creator.resource_tools.import_dialog.file_selected.emit(creator.root_dir.path_join("app/assets/playseed-icon.png"))
 	require(creator.sent_request.action == "import_asset" and creator.sent_request.has("png_base64"), "image selection reaches the import worker")
 	creator.resource_tools.select_tab("代码")

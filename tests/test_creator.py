@@ -83,6 +83,20 @@ class CreatorTests(unittest.TestCase):
             b.process_request({**request, 'project_directory': str(occupied)}, self.job)
         model.assert_not_called()
 
+    def test_create_project_records_delivery_expectation(self):
+        first = self.data / '网页期望'
+        first.mkdir()
+        bad = self.data / '非法值'
+        bad.mkdir()
+        base = {'action': 'create_project', 'prompt': '小猫冒险'}
+        with self.assertRaises(ValueError):
+            b.process_request({**base, 'project_directory': str(bad), 'delivery': 'host'}, self.job)
+        with patch.object(b, 'request_structured') as model:
+            draft = b.process_request({**base, 'project_directory': str(first), 'delivery': 'web'}, self.job)['idea']
+        model.assert_not_called()
+        self.assertEqual(draft['delivery'], 'web')
+        self.assertEqual(b.read_json(creator.path_for(b, draft['id']))['delivery'], 'web')
+
     def test_stale_confirmation_does_not_change_latest_plan(self):
         first = self.discuss()
         second = self.discuss(first)

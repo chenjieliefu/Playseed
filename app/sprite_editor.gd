@@ -60,22 +60,29 @@ func setup(owner_ui: Control, entry: Dictionary) -> void:
 	project_id = str(host.current.id)
 	revision = int(host.current.revision)
 	theme = host.theme.duplicate()
-	theme.set_stylebox("panel", "AcceptDialog", host.style(Color("f8faf6")))
+	var sprite_surface := host.composer_surface()
+	sprite_surface.bg_color = Color("f8faf6")
+	sprite_surface.content_margin_top = 22
+	sprite_surface.content_margin_bottom = 18
+	theme.set_stylebox("panel", "AcceptDialog", sprite_surface)
 	for state in ["normal", "focus", "read_only"]: theme.set_stylebox(state, "LineEdit", host.style(Color("edf1e9")))
 	theme.set_color("font_color", "LineEdit", host.INK)
 	theme.set_color("font_uneditable_color", "LineEdit", host.MUTED)
 	for button in [get_ok_button(), get_cancel_button()]:
 		for state in ["normal", "hover", "pressed", "focus"]: button.add_theme_stylebox_override(state, host.style(Color("e5eedb")))
-		for state in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]: button.add_theme_color_override(state, host.INK)
+		for state in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"]: button.add_theme_color_override(state, host.INK)
 	title = "切图与帧动画 · " + str(asset.name)
 	ok_button_text = "保存动画设置"
 	cancel_button_text = "取消"
 	exclusive = true
+	borderless = true
+	transparent = true
 	builder = load(host.root_dir.path_join("runtime/playseed_sprite_frames.gd"))
 	var box := VBoxContainer.new()
 	box.custom_minimum_size.x = 640
 	box.add_theme_constant_override("separation", 12)
 	add_child(box)
+	box.add_child(host.label("切图与帧动画 · " + str(asset.name), 23, host.INK))
 	box.add_child(host.label("每格一帧，从左到右、再从上到下。请使用尺寸一致、排列整齐的帧图。", 14, host.INK, true))
 	preview = SheetPreview.new()
 	preview.custom_minimum_size = Vector2(600, 240)
