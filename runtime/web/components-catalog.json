@@ -1,0 +1,43 @@
+{
+  "version": 2,
+  "components": [
+    {
+      "id": "playseed.sprout-mage",
+      "name": "嫩芽魔法师",
+      "type": "procedural_character",
+      "source": "Playseed",
+      "api": "components.createSproutMage()",
+      "description": "奶油色圆头、黑面罩、嫩芽魔法师，支持抬杖、挥杖、身体倾斜、踏步、披风与恢复动作。"
+    },
+    {
+      "id": "elemental.nature-sigil",
+      "name": "自然符文法阵",
+      "type": "shader_effect",
+      "source": "LinearAbiltyCastingExtendedThreeJS@364c9ce70ba784809291e87981ca83a19560f73d",
+      "license": "MIT",
+      "api": "components.createSpellEffects(scene)"
+    },
+    {
+      "id": "elemental.cosmic-ring",
+      "name": "元素冲击波",
+      "type": "shader_effect",
+      "source": "LinearAbiltyCastingExtendedThreeJS@364c9ce70ba784809291e87981ca83a19560f73d",
+      "license": "MIT",
+      "api": "effects.cast(index,{x,z}); effects.update(dt); effects.reset()"
+    },
+    {
+      "id": "elemental.arcane-bloom",
+      "name": "奥术花开",
+      "type": "shader_effect",
+      "source": "LinearAbiltyCastingExtendedThreeJS@364c9ce70ba784809291e87981ca83a19560f73d",
+      "license": "MIT"
+    },
+    {
+      "id": "elemental.venom-crystal",
+      "name": "剧毒晶簇",
+      "type": "shader_effect",
+      "source": "LinearAbiltyCastingExtendedThreeJS@364c9ce70ba784809291e87981ca83a19560f73d",
+      "license": "MIT"
+    }
+  ]
+}

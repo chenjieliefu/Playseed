@@ -19,7 +19,7 @@ func _ready() -> void:
 func say(text_value: String, input_rect: Rect2) -> void:
 	message = text_value
 	var bubble_w: float = maxf(150.0, text_value.length() * 14.0 + 44.0)
-	size = Vector2(64.0 + bubble_w, 72.0)
+	size = Vector2(80.0 + bubble_w, 84.0)
 	position = Vector2(input_rect.end.x - size.x - 12.0, input_rect.end.y - size.y - 10.0)
 	_age = 0.0
 	visible = true
@@ -42,8 +42,8 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
 	var bob := sin(minf(_age, 1.2) * 6.0) * 2.0 if _age < 1.2 else 0.0
-	var icon_size := 56.0
-	var gap := 6.0
+	var icon_size := 72.0
+	var gap := 8.0
 	var bubble_x := icon_size + gap
 	var bubble_h := 52.0
 	var bubble_y := (size.y - bubble_h) / 2.0 + bob
@@ -68,9 +68,8 @@ func _draw() -> void:
 	draw_line(tail_top, tail_tip, LINE, 1.0)
 	draw_line(tail_bottom, tail_tip, LINE, 1.0)
 	# Mascot portrait, softly framed.
-	draw_circle(Vector2(icon_size / 2.0, size.y / 2.0 + bob), icon_size / 2.0 + 3.0, Color("e6edd9"))
 	if icon != null:
-		draw_texture_rect(icon, Rect2(2.0, size.y / 2.0 - icon_size / 2.0 + bob, icon_size, icon_size), true)
+		draw_texture_rect(icon, Rect2(2.0, size.y / 2.0 - icon_size / 2.0 + bob, icon_size, icon_size), false)
 	# Bubble text.
 	var font := get_theme_default_font()
 	draw_string(font, Vector2(bubble_x + 16.0, bubble_y + bubble_h / 2.0 + 5.0), message,

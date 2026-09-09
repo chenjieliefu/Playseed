@@ -247,7 +247,7 @@ func render_code() -> void:
 		code.text = "第一版游戏制作完成后，代码会显示在这里。"
 		notice.text = "当前还没有已完成的游戏版本。"
 		return
-	for name in ["game.gd", "main.tscn", "project.godot", "world.json", "spatial_world.gd", "spatial_player.gd", "playseed_base.gd", "playseed_feedback.gd", "playseed_sprite_frames.gd"]:
+	for name in ["game.js", "index.html", "web.json", "boot.js", "style.css", "game.gd", "main.tscn", "project.godot", "world.json", "spatial_world.gd", "spatial_player.gd", "playseed_base.gd", "playseed_feedback.gd", "playseed_sprite_frames.gd"]:
 		if FileAccess.file_exists(revision_path().path_join(name)): files.add_item(name)
 	notice.text = "第 %d 版 · 只读代码。修改请在左侧描述，检查通过后会保存新版本。" % int(host.made_game.current_revision)
 	load_code()
@@ -350,8 +350,8 @@ func render_catalog() -> void:
 			for asset in manifest.get("assets", []):
 				if asset.has("animation"): entries.push_front(asset)
 		notice.text = {"动画":"动画：让角色或物品动起来，例如登场、悬浮、受击变形。", "特效":"特效：给命中、拾取或移动增加短暂视觉反馈。", "扩展":"扩展：给游戏增加玩法或界面，例如生命、金币、暂停和波次。"}.get(active,"") + " 下方是可选建议，不是当前游戏已启用的功能；添加到对话后确认修改，再生成新版本。"
-		if host.made_game.get("format","") == "room3d-v1":
-			notice.text += " 这些预设目前只接通2D，当前3D项目暂不能应用。"
+		if host.made_game.get("format","") == "room3d-v1" or str(host.made_game.get("format", "")).begins_with("web-"):
+			notice.text += " 这些预设目前只接通本机2D；请直接在对话中描述想增加的效果。"
 	var count := 0
 	var row: HBoxContainer
 	for entry in entries:
@@ -408,7 +408,7 @@ func render_catalog() -> void:
 			card.add_child(main)
 		else:
 			var action: Button = host.compact(host.button("添加到对话", func(): propose(prompt)))
-			action.disabled = host.busy or host.current.is_empty() or (active != "素材" and host.made_game.get("format","") == "room3d-v1")
+			action.disabled = host.busy or host.current.is_empty() or (active != "素材" and (host.made_game.get("format","") == "room3d-v1" or str(host.made_game.get("format", "")).begins_with("web-")))
 			card.add_child(action)
 		if is_asset and not entry.has("file_path"):
 			var configure: Button = host.compact(host.button("切图与帧动画", func(): edit_sprite(entry)))

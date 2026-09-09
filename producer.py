@@ -240,6 +240,9 @@ def handle(request, job, api):
     idea = api.read_json(path_for(api, idea_id))
     old = read_game(api, idea_id)
     action = request['action']
+    import web_games
+    if web_games.selected_format(idea or {}, old, request) in web_games.FORMATS:
+        return web_games.handle(request, job, api, idea, old)
     if action == 'preview_created':
         if not old:
             raise ValueError('请先制作一个可玩版本。')

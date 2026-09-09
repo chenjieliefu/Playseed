@@ -32,3 +32,5 @@ venv/
 /app/_qa*
 /app/qa_*.gd
 /app/qa_*.gd.uid
+
+/node_modules/

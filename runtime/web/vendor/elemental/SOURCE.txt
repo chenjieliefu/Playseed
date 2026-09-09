@@ -1,0 +1,6 @@
+Source: https://github.com/achrefelouafi/LinearAbiltyCastingExtendedThreeJS
+Commit: 364c9ce70ba784809291e87981ca83a19560f73d
+MIT (c) 2026 mohamedachrefelouafi
+Playseed modifications: relative Three.js import paths. NatureSigil and CosmicRing adapted through the separate Playseed effects adapter.
+
+Additional adapted source: ArcaneBloomMaterial, VenomCrystalMaterial, GrowthGeometry, shaderPatch. Geometry, lighting and game behavior are Playseed adapters, not a port of all ten abilities.

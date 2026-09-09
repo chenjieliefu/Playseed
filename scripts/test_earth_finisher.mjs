@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import * as T from '../runtime/web/vendor/three.module.js';
+import {createSpellEffects} from '../runtime/web/spell-effects.js';
+const scene=new T.Scene(),effects=createSpellEffects(scene);
+effects.cast(3,{x:0,z:-12},{x:0,y:.1,z:6.5});effects.update(1);
+const tip=scene.getObjectByName('earth-finisher');assert.ok(tip);
+assert.equal(tip.geometry.type,'ConeGeometry');assert.equal(tip.geometry.parameters.radius,.65);
+assert.ok(tip.scale.y>=7&&tip.scale.x>3,'finishing spike must exceed the ordinary spikes');
+assert.ok(Math.abs(tip.position.y-tip.scale.y/2)<.001,'base should rise from the ground');
+effects.reset();assert.equal(scene.getObjectByName('earth-finisher'),undefined);
+console.log('EARTH_FINISHER_OK: larger pointed cone, grounded, reset cleanup');

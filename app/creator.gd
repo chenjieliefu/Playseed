@@ -845,7 +845,7 @@ func build_ui() -> void:
 	account_button.icon = load("res://assets/playseed-mascot-farmer-v1.png")
 	account_button.add_theme_constant_override("icon_max_width", 40)
 	side.add_child(account_button)
-	sidebar_footer = label("本机创作 · 0.8.39", 12, MUTED)
+	sidebar_footer = label("本机创作 · 0.8.53", 12, MUTED)
 	side.add_child(sidebar_footer)
 	var margin := MarginContainer.new()
 	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -1637,9 +1637,23 @@ func version_source(version: Dictionary) -> String:
 	}.get(str(version.get("source", "")), "游戏更新")
 
 func version_validation_text(version: Dictionary) -> String:
+	if str(version.get("format", "")).begins_with("web-"):
+		var checks: Array = version.get("playability_checks", [])
+		var replay := "\n暂停、继续及连续两次重玩检查通过。" if checks.has("pause_resume") and checks.has("restart_replay") else ""
+		if str(version.get("input_validation", "")) == "synthetic-hand-landmarks":
+			return "浏览器检查：启动与重开正常 · 模拟手势操作通过" + replay + "\n真人手势手感仍需试玩确认。"
+		if str(version.get("input_validation", "")) == "mouse-keyboard":
+			return "浏览器检查：启动正常 · 鼠标键盘操作有响应 · 重开恢复正常" + replay
+		return "浏览器检查：启动、核心输入与重开通过 · 旧记录未区分输入方式"
 	if version.has("test"):
 		return "自动检查：启动正常 · 核心操作有响应 · 重开恢复正常"
 	return "自动检查：启动与重开正常 · 旧版本未记录核心操作探针"
+
+func version_request_text(version: Dictionary) -> String:
+	var request := str(version.get("prompt", "")).strip_edges()
+	if str(version.get("source", "")) != "revise_game" or request.is_empty():
+		return ""
+	return "本次修改要求\n%s\n\n" % request
 
 func version_short_summary(version: Dictionary) -> String:
 	var summary := version_summary(version).replace("\n", " ").strip_edges()
@@ -1695,7 +1709,7 @@ func show_version_details() -> void:
 	version_heading.text = "第 %d 版%s" % [int(version.revision), "  ·  当前使用" if is_current else ""]
 	version_meta.text = "%s  ·  %s" % [version_date(version), version_source(version)]
 	version_summary_text.text = version_summary(version)
-	history_text.text = "%s\n\n这一版已经有\n%s\n\n这一版还没有\n%s" % [version_validation_text(version), bullets(version.get("implemented", [])), bullets(version.get("limitations", []))]
+	history_text.text = version_request_text(version) + "%s\n\n这一版已经有\n%s\n\n这一版还没有\n%s" % [version_validation_text(version), bullets(version.get("implemented", [])), bullets(version.get("limitations", []))]
 	restore_game_button.visible = not is_current
 	restore_game_button.disabled = busy
 	restore_game_button.text = "恢复这一版，生成新版本"
@@ -2358,6 +2372,7 @@ func update_buttons() -> void:
 	build_game_button.text = "按新方案制作" if has_game else "开始制作第一版" if has_build_plan() else "准备素材和制作清单"
 	dimension_picker.visible = confirmed and not has_game
 	dimension_picker.disabled = busy
+	update_dimension_label()
 	dimension_picker.select(int(dimension_choices.get(str(current.get("id", "")), 0)))
 	play_game_button.visible = has_game
 	play_game_button.disabled = busy
@@ -2393,6 +2408,8 @@ func update_buttons() -> void:
 		preview_note.text = "正在把想法变得清楚…\n完成后会告诉你下一步" if pending_action == "discuss" else "正在制作模型草稿…\n完成后请先预览并采用" if pending_action == "generate_model" else "正在处理这一步…\n进度会显示在对话区"
 	elif not busy:
 		update_effect()
+	if not busy and ((made_game.is_empty() and current.get("delivery", "") == "web") or str(made_game.get("format", "")).begins_with("web-")):
+		next_hint.text += " 网页版本可在本机浏览器试玩；公开分享链接尚未接通。"
 	next_hint.visible = not next_hint.text.is_empty()
 	status.visible = not status.text.is_empty()
 	if route == "workspace":
@@ -2417,12 +2434,19 @@ func send_message() -> void:
 		show_idea()
 		call_deferred("scroll_to_latest")
 
+func update_dimension_label() -> void:
+	var is_web: bool = current.get("delivery", "") == "web"
+	dimension_picker.set_item_text(1, "制作立体网页游戏 · 实验性" if is_web else "实验性 3D · 房间寻物")
+	dimension_picker.tooltip_text = "支持用程序造型制作小型立体场景和玩法；先在本机浏览器试玩。支持可选手势与合成音效；公开链接尚未接通。" if is_web else "3D首轮支持几何体房间、行走碰撞、寻物与出口；静态基础色GLB可作障碍外观；贴图、跳跃、战斗和3D声音尚未接通。"
+
 func created_action(action: String, extra: Dictionary = {}) -> void:
 	if current.is_empty():
 		return
 	var request := {"action": action, "idea_id": current.id, "revision": int(current.revision), "game_revision": int(made_game.get("current_revision", 0)), "model": selected_model(), "reasoning_effort": selected_effort()}
 	if action == "build_game" and made_game.is_empty() and int(dimension_choices.get(str(current.id), 0)) == 1:
-		request["format"] = "room3d-v1"
+		request["format"] = "web-3d-v1" if current.get("delivery", "") == "web" else "room3d-v1"
+	if action == "build_game" and made_game.is_empty() and current.get("delivery", "") == "web" and not request.has("format"):
+		request["format"] = "web-2d-v1"
 	request.merge(extra)
 	start_job(request)
 

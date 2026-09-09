@@ -1,0 +1,5 @@
+*{box-sizing:border-box}body{margin:0;background:#080d19;color:#e4ecff;font:15px system-ui,"PingFang SC",sans-serif;overflow:hidden}main{position:relative;width:100vw;height:100vh}canvas{display:block;position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(100vw,160vh);height:min(100vh,62.5vw);object-fit:contain}#hud{position:absolute;top:24px;left:28px;right:180px;white-space:pre-line;pointer-events:none;text-shadow:0 2px 6px #000;font-size:18px;line-height:1.7}#help{position:absolute;bottom:18px;left:28px;right:180px;color:#b8c9df;pointer-events:none;text-shadow:0 2px 4px #000}button{position:absolute;right:24px;top:26px;border:1px solid #597292;background:#172b43dd;color:#e2ecfa;padding:10px 16px;border-radius:9px;cursor:pointer}button:hover{background:#284260}#error{position:absolute;inset:25%;padding:30px;background:#381d2d;border:1px solid #d3799b;border-radius:14px;white-space:pre-wrap}
+
+@media(max-width:950px){#hud{font-size:14px;line-height:1.55;top:20px;right:30px}}
+
+.responsive-game canvas{width:100vw;height:100vh;object-fit:fill}.responsive-game main{width:100vw;height:100vh}

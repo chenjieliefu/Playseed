@@ -1,0 +1,1 @@
+{"name":"playseed-web-runtime","private":true,"version":"0.1.0","description":"Local browser verification for Playseed generated games","dependencies":{"@mediapipe/tasks-vision":"1.0.1","acorn":"8.15.0","playwright-core":"1.62.1"}}

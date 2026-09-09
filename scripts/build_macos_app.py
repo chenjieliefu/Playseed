@@ -39,7 +39,7 @@ info = {
     'CFBundleName': 'Playseed', 'CFBundleDisplayName': 'Playseed',
     'CFBundleIdentifier': 'local.playseed.studio', 'CFBundleExecutable': 'Playseed',
     'CFBundleIconFile': 'Playseed.icns', 'CFBundlePackageType': 'APPL',
-    'CFBundleShortVersionString': '0.8.39', 'CFBundleVersion': '56',
+    'CFBundleShortVersionString': '0.8.53', 'CFBundleVersion': '70',
     'CFBundleDevelopmentRegion': 'zh_CN',
     'CFBundleLocalizations': ['zh-Hans', 'zh_CN'],
     'CFBundleAllowMixedLocalizations': True,

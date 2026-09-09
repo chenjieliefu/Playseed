@@ -1,0 +1,6 @@
+import assert from 'node:assert/strict';
+import {GestureMapping} from '../runtime/web/gesture-mapping.mjs';
+function hand(scale=1,x=.7,y=.6){const h=Array.from({length:21},()=>({x,y,z:0}));h[0].y=y+.2;for(let i=0;i<4;i++)for(let j=0;j<4;j++)h[5+4*i+j]={x:x+(i-1.5)*.05,y:y-.1*j,z:0};h[4]={x:x-.3,y:y-.2,z:0};return h.map(p=>({x:x+(p.x-x)*scale,y:y+(p.y-y)*scale,z:0}));}
+const result=h=>({landmarks:h?[h]:[],handedness:h?[[{categoryName:'Left',score:.99}]]:[]});
+const m=new GestureMapping({depthAim:true});m.sample(result(hand()),0);let forward=0;for(let i=1;i<=15;i++)forward+=m.sample(result(hand(1.25)),i*33).motion.y;assert.ok(forward<-150,'pushing toward camera must move aim toward far field');let drift=0;for(let i=16;i<=30;i++)drift+=m.sample(result(hand(1.25)),i*33).motion.y;assert.ok(Math.abs(drift)<2);let back=0;for(let i=31;i<=45;i++)back+=m.sample(result(hand()),i*33).motion.y;assert.ok(back>150);assert.ok(Math.abs(forward+back)<4);
+const a=new GestureMapping({depthAim:true});a.sample(result(hand()),0);assert.ok(Math.abs(a.sample(result(hand(1,.7,.4)),100).motion.y)<.01,'lifting without depth change must not send aim far');a.sample(result(null),200);assert.deepEqual(a.sample(result(hand(1.3)),300).motion,{x:0,y:0});console.log('HAND_DEPTH_OK: forward/far, back/near, hold/no drift, lift independent and reacquire');

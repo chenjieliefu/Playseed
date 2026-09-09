@@ -1,0 +1,3 @@
+@mediapipe/tasks-vision 1.0.1, Google LLC, Apache-2.0
+https://github.com/google-ai-edge/mediapipe
+Hand landmarker float16 model v1, Google MediaPipe. Runs locally, camera images are not uploaded.

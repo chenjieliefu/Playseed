@@ -245,7 +245,7 @@ def export_project(request, job, api):
         with zipfile.ZipFile(temporary, 'w', zipfile.ZIP_DEFLATED) as archive:
             for path in project.rglob('*'):
                 rel = path.relative_to(project)
-                if path.is_file() and not path.is_symlink() and not any(p.startswith('.') for p in rel.parts) and path.suffix in ['.gd', '.tscn', '.godot', '.png', '.json', '.wav', '.glb']:
+                if path.is_file() and not path.is_symlink() and not any(p.startswith('.') for p in rel.parts) and path.suffix in (['.html', '.js', '.mjs', '.css', '.png', '.json', '.txt', '.wasm', '.task'] if game.get('format', '').startswith('web-') else ['.gd', '.tscn', '.godot', '.png', '.json', '.wav', '.glb']):
                     archive.write(path, rel)
         api.cancelled(job)
         # Exclusive creation avoids overwriting a file created during export.
